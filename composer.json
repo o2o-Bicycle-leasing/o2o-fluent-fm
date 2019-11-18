@@ -1,0 +1,17 @@
+{
+    "name": "o2o/fluent-fm",
+    "description": "A PHP package for FileMaker Server's Data API using a fluent query builder style interface.",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Antenna",
+            "email": "info@weareantenna.be"
+        }
+    ],
+    "autoload":    {
+        "psr-4": {
+            "o2o\\FluentFM\\": "src/"
+        }
+    },
+    "require": {}
+}
