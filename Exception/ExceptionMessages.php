@@ -9,9 +9,9 @@ class ExceptionMessages
      *
      * @return string
      */
-    protected static function baseMessage( $message ) : string
+    protected static function baseMessage($message) : string
     {
-        return sprintf( 'FileMaker returned error %d - %s', $message->code, $message->message );
+        return sprintf('FileMaker returned error %d - %s', $message->code, $message->message);
     }
 
 
@@ -21,12 +21,12 @@ class ExceptionMessages
      *
      * @return string
      */
-    public static function generic( $message, array $query ) : string
+    public static function generic($message, array $query) : string
     {
-        return self::format( self::sep( self::baseMessage( $message ) )
+        return self::format(self::sep(self::baseMessage($message))
                              . self::textWrap(
-                '<fg=green>This is the payload that was sent to FileMaker:</>' . PHP_EOL . self::queryDump( $query )
-            ) . self::sep() );
+                                 '<fg=green>This is the payload that was sent to FileMaker:</>' . PHP_EOL . self::queryDump($query)
+                             ) . self::sep());
     }
 
 
@@ -36,17 +36,17 @@ class ExceptionMessages
      *
      * @return string
      */
-    public static function fieldMissing( $message, array $query ) : string
+    public static function fieldMissing($message, array $query) : string
     {
-        return self::format( self::sep( self::baseMessage( $message ) )
-                             . self::textWrap( 'FileMaker does not specify which field, so if you are sure that the field exists:
+        return self::format(self::sep(self::baseMessage($message))
+                             . self::textWrap('FileMaker does not specify which field, so if you are sure that the field exists:
 
 - You may be trying to use <fg=white>soft deletes</> without the <fg=white>`deleted_at`</> field.
 - You may be trying to <fg=white>sort by latest</> without the <fg=white>`created_at`</> field.
 - You may be trying to <fg=white>get last updated</> without the <fg=white>`updated_at`</> field.
 
 <fg=green>Please review the payload that was sent to FileMaker:</>
-    ' . self::queryDump( $query ) ) . self::sep() );
+    ' . self::queryDump($query)) . self::sep());
     }
 
 
@@ -56,20 +56,20 @@ class ExceptionMessages
      *
      * @return string
      */
-    public static function fieldInvalid( $message, array $query ) : string
+    public static function fieldInvalid($message, array $query) : string
     {
-        $dump = self::queryDump( $query );
+        $dump = self::queryDump($query);
         $note = '';
 
-        if( ! stristr( $dump, "'ids'" ) ) {
+        if (! stristr($dump, "'ids'")) {
             $note = PHP_EOL . PHP_EOL . '<fg=red;options=bold>
 Note:: This payload does seem to be <fg=white;options=bold>missing the `id` field</>. This is likely the problem.
 </>';
         }
 
-        return self::format( self::sep( self::baseMessage( $message ) )
+        return self::format(self::sep(self::baseMessage($message))
                              . self::textWrap(
-                'FileMaker did not specify which field, so here are some tips:
+                                 'FileMaker did not specify which field, so here are some tips:
 
 - This is often due to <fg=white>creating a record</> without the <fg=white>`id`</> field. 
 - Ensure that you are including all fields that are <fg=white>defined as required</> by the FileMaker table.
@@ -77,8 +77,8 @@ Note:: This payload does seem to be <fg=white;options=bold>missing the `id` fiel
 - If you have a <fg=white>unique `id` field</>, make sure the id <fg=white>is not already set</>.
 
 <fg=green>Please review the payload that was sent:</>'
-                . PHP_EOL . $dump . $note
-            ) . self::sep() );
+                                 . PHP_EOL . $dump . $note
+                             ) . self::sep());
     }
 
 
@@ -90,14 +90,14 @@ Note:: This payload does seem to be <fg=white;options=bold>missing the `id` fiel
      *
      * @return string
      */
-    public static function sep( string $title = '', int $len = 120 ) : string
+    public static function sep(string $title = '', int $len = 120) : string
     {
-        if( $title ) {
-            $len   -= strlen( $title ) + 4;
+        if ($title) {
+            $len   -= strlen($title) + 4;
             $title = '== <fg=white;options=bold>' . $title . '</> ';
         }
 
-        return str_repeat( PHP_EOL, 2 ) . '<fg=red;options=bold>' . $title . str_repeat( '=', $len ) . '</>' . PHP_EOL;
+        return str_repeat(PHP_EOL, 2) . '<fg=red;options=bold>' . $title . str_repeat('=', $len) . '</>' . PHP_EOL;
     }
 
 
@@ -109,9 +109,9 @@ Note:: This payload does seem to be <fg=white;options=bold>missing the `id` fiel
      *
      * @return string
      */
-    public static function textWrap( string $string, int $len = 120 ) : string
+    public static function textWrap(string $string, int $len = 120) : string
     {
-        return str_replace( PHP_EOL, PHP_EOL . '    ', wordwrap( PHP_EOL . $string, $len - 4, PHP_EOL ) );
+        return str_replace(PHP_EOL, PHP_EOL . '    ', wordwrap(PHP_EOL . $string, $len - 4, PHP_EOL));
     }
 
 
@@ -122,10 +122,10 @@ Note:: This payload does seem to be <fg=white;options=bold>missing the `id` fiel
      *
      * @return string
      */
-    protected static function format( string $message ) : string
+    protected static function format(string $message) : string
     {
-        if( PHP_SAPI !== 'cli' ) {
-            return preg_replace( '/=+/', '=', strip_tags( $message ) );
+        if (PHP_SAPI !== 'cli') {
+            return preg_replace('/=+/', '=', strip_tags($message));
         }
 
         return $message;
@@ -145,18 +145,17 @@ Note:: This payload does seem to be <fg=white;options=bold>missing the `id` fiel
      *
      * @return string
      */
-    protected static function queryDump( array $query ) : string
+    protected static function queryDump(array $query) : string
     {
-        $export = var_export( $query, true );
-        $export = preg_replace( '/^([ ]*)(.*)/m', '  $1$2', $export );
-        $array  = preg_split( "/\r\n|\n|\r/", $export );
+        $export = var_export($query, true);
+        $export = preg_replace('/^([ ]*)(.*)/m', '  $1$2', $export);
+        $array  = preg_split("/\r\n|\n|\r/", $export);
         $array  = preg_replace(
             [ "/\s*array\s\($/", "/\)(,)?$/", "/\s=>\s$/", '/NULL/' ],
             [ null, ']$1', ' => [', 'null' ],
             $array
         );
 
-        return PHP_EOL . '  <fg=white>$payload = ' . implode( PHP_EOL, array_filter( [ '[' ] + $array ) ) . ';</>';
+        return PHP_EOL . '  <fg=white>$payload = ' . implode(PHP_EOL, array_filter([ '[' ] + $array)) . ';</>';
     }
-
 }

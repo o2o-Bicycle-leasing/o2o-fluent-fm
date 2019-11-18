@@ -47,7 +47,8 @@ class Url
      */
     public static function container(string $layout, string $field, int $recordId) : string
     {
-        return sprintf( 'layouts/%s/records/%s/containers/%s/1',
+        return sprintf(
+            'layouts/%s/records/%s/containers/%s/1',
             $layout,
             $recordId,
             $field
