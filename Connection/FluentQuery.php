@@ -3,6 +3,7 @@
 namespace o2o\FluentFM\Connection;
 
 use o2o\FluentFM\Contract\FluentFM;
+use function count;
 
 /**
  * Trait FluentQuery.
@@ -62,7 +63,7 @@ trait FluentQuery
      */
     public function sortAsc(string $field) : FluentFM
     {
-        $this->sort( $field );
+        $this->sort($field);
 
         return $this;
     }
@@ -96,7 +97,7 @@ trait FluentQuery
      */
     public function sortDesc(string $field) : FluentFM
     {
-        $this->sort( $field, false );
+        $this->sort($field, false);
 
         return $this;
     }
@@ -132,7 +133,7 @@ trait FluentQuery
      */
     public function whereEmpty($field) : FluentFM
     {
-        return $this->where( $field, '' );
+        return $this->where($field, '');
     }
 
     /**
@@ -143,11 +144,11 @@ trait FluentQuery
      */
     public function where($field, ...$params) : FluentFM
     {
-        switch ( \count( $params ) ) {
-            case  1:
+        switch (count($params)) {
+            case 1:
                 $value = '='.$params[ 0 ];
                 break;
-            case  2:
+            case 2:
                 $value = $params[ 0 ].$params[ 1 ];
                 break;
             default:
@@ -173,7 +174,7 @@ trait FluentQuery
      */
     public function whereNotEmpty(string $field) : FluentFM
     {
-        return $this->has( $field );
+        return $this->has($field);
     }
 
     /**
@@ -183,7 +184,7 @@ trait FluentQuery
      */
     public function has(string $field) : FluentFM
     {
-        return $this->where( $field, '*' );
+        return $this->where($field, '*');
     }
 
     /**
@@ -193,8 +194,8 @@ trait FluentQuery
     {
         $output = [];
 
-        foreach ( $this->query as $param => $value ) {
-            if ( strpos( $param, 'script' ) !== 0 ) {
+        foreach ($this->query as $param => $value) {
+            if (strpos($param, 'script') !== 0) {
                 $param = '_'.$param;
             }
 
@@ -216,7 +217,7 @@ trait FluentQuery
      */
     public function prerequest(string $script, $param = null) : FluentFM
     {
-        return $this->script( $script, $param, 'prerequest' );
+        return $this->script($script, $param, 'prerequest');
     }
 
     /**
@@ -226,25 +227,18 @@ trait FluentQuery
      * @param string      $script
      * @param null        $param
      * @param string|null $type
-     * @param array       $fieldData
      *
      * @return self|FluentFM
      */
-    public function script(string $script, $param = null, string $type = null, array $fieldData = []) : FluentFM
+    public function script(string $script, $param = null, string $type = null) : FluentFM
     {
         $base = 'script';
 
-        if ( $type ) {
+        if ($type) {
             $base .= '.'.$type;
         }
 
-        $this->query[ $base ]          = (string) $script;
-        $this->query[ $base.'.param' ] = $param;
-
-        if ($fieldData && count($fieldData) > 0) {
-            $this->query['fieldData'] = $fieldData;
-        }
-
+        $this->query[ $base ]          = $script;
         $this->query[ $base.'.param' ] = $param;
 
         return $this;
@@ -260,7 +254,7 @@ trait FluentQuery
      */
     public function presort(string $script, $param = null) : FluentFM
     {
-        return $this->script( $script, $param, 'presort' );
+        return $this->script($script, $param, 'presort');
     }
 
     /**

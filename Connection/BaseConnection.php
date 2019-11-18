@@ -49,15 +49,15 @@ abstract class BaseConnection
     public function __construct(array $config, Client $client = null)
     {
         $this->config = $config;
-        $this->client = $client ?? new Client( [
+        $this->client = $client ?? new Client([
                 'base_uri'    => sprintf(
                     'https://%s/fmi/data/v1/databases/%s/',
-                    $this->config( 'host' ),
-                    $this->config( 'file' )
+                    $this->config('host'),
+                    $this->config('file')
                 ),
                 'verify'      => false,
                 'http_errors' => false,
-            ] );
+            ]);
 
         $this->getToken();
     }
@@ -84,7 +84,7 @@ abstract class BaseConnection
      */
     protected function authHeader() : array
     {
-        if ( !$this->token ) {
+        if (!$this->token) {
             $this->getToken();
         }
 
@@ -107,18 +107,18 @@ abstract class BaseConnection
         }
 
         try {
-            $token = $this->client->post( 'sessions', [
+            $token = $this->client->post('sessions', [
                 'headers' => [
                     'Content-Type'  => 'application/json',
-                    'Authorization' => 'Basic '.base64_encode( $this->config( 'user' ).':'.$this->config( 'pass' ) ),
+                    'Authorization' => 'Basic '.base64_encode($this->config('user').':'.$this->config('pass')),
                 ],
-            ] )->getHeader( 'X-FM-Data-Access-Token' )[ 0 ];
+            ])->getHeader('X-FM-Data-Access-Token')[ 0 ];
 
-            Cache::put('fm_token', $token, 60 * 12);
+            Cache::put('fm_token', $token, 60 * 14);
 
             return $this->token = $token;
-        } catch ( ClientException $e ) {
-            throw new FilemakerException( 'Filemaker access unauthorized - please check your credentials', 401 );
+        } catch (ClientException $e) {
+            throw new FilemakerException('Filemaker access unauthorized - please check your credentials', 401);
         }
     }
 }
