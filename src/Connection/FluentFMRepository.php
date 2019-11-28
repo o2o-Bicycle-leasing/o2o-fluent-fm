@@ -340,7 +340,7 @@ class FluentFMRepository extends BaseConnection implements FluentFM
             $downloader = null;
         // };
 
-        return $this;
+        return $filename;
     }
 
 
