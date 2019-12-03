@@ -50,13 +50,15 @@ abstract class BaseConnection
     {
         $this->config = $config;
         $this->client = $client ?? new Client([
-                'base_uri'    => sprintf(
+                'base_uri'        => sprintf(
                     'https://%s/fmi/data/v1/databases/%s/',
                     $this->config('host'),
                     $this->config('file')
                 ),
-                'verify'      => false,
-                'http_errors' => false,
+                'verify'          => false,
+                'http_errors'     => false,
+                'connect_timeout' => 10,
+                'timeout'         => 60,
             ]);
 
         $this->getToken();
