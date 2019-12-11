@@ -41,11 +41,21 @@ class Response
 
         if (isset(static::body($response)->response->data)) {
             foreach (static::body($response)->response->data as $record) {
-                $records[$record->recordId] = $with_portals ? (array)$record : (array)$record->fieldData;
+                $records[$record->recordId] = $with_portals ? (array)$record : self::generateResponse($record);
             }
         }
 
         return $records;
+    }
+
+    public static function generateResponse($record) {
+        $fieldData = (array)$record->fieldData;
+
+        if (!isset($fieldData['recordId'])) {
+            $fieldData['recordId'] = (int)$record->recordId;
+        }
+
+        return $fieldData;
     }
 
 
