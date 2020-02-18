@@ -507,12 +507,4 @@ class FluentFMRepository extends BaseConnection implements FluentFM
     {
         return array_slice($this->get(), -1, 1)[0];
     }
-
-    /**
-     * @inheritDoc
-     */
-    public function globals(string $layout, array $fields = []): bool
-    {
-        // TODO: Implement globals() method.
-    }
 }

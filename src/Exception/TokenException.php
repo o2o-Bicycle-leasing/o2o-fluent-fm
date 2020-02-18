@@ -15,4 +15,9 @@ class TokenException extends FilemakerException
     {
         return new self('Filemaker access unauthorized - please check your credentials', 401);
     }
+
+    public static function invalid()
+    {
+        return new self('Invalid Filemaker Data API token - please refresh token', 401);
+    }
 }
