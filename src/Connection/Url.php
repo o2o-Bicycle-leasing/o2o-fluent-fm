@@ -31,14 +31,6 @@ class Url
     }
 
     /**
-     * @return string
-     */
-    public static function globals() : string
-    {
-        return 'globals';
-    }
-
-    /**
      * @param string $layout
      * @param string $field
      * @param int    $recordId

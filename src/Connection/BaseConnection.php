@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Support\Facades\Cache;
 use o2o\FluentFM\Exception\FilemakerException;
+use o2o\FluentFM\Exception\TokenException;
 
 /**
  * Class BaseConnection.
@@ -13,39 +14,21 @@ use o2o\FluentFM\Exception\FilemakerException;
 abstract class BaseConnection
 {
 
-    /**
-     * @var Client
-     */
+    /** @var Client */
     protected $client;
 
-    /**
-     * @var
-     */
+    /** @var callable */
     protected $callback;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $config;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $token;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $field_cache = [];
 
-    /**
-     * BaseConnection constructor.
-     *
-     * @param array       $config
-     * @param Client|null $client
-     *
-     * @throws FilemakerException
-     */
     public function __construct(array $config, Client $client = null)
     {
         $this->config = $config;
@@ -77,13 +60,6 @@ abstract class BaseConnection
         return $key ? $this->config[ $key ] : $this->config;
     }
 
-    /**
-     * Generate authorization header.
-     *
-     * @throws FilemakerException
-     *
-     * @return array
-     */
     protected function authHeader() : array
     {
         if (!$this->token) {
@@ -95,14 +71,7 @@ abstract class BaseConnection
         ];
     }
 
-    /**
-     * Request api access token from server.
-     *
-     * @throws FilemakerException
-     *
-     * @return string
-     */
-    public function getToken($force = false) : string
+    public function getToken(bool $force = false) : string
     {
         if (!$force && Cache::has('fm_token') && !is_null(Cache::get('fm_token'))) {
             return $this->token = Cache::get('fm_token');
@@ -114,13 +83,18 @@ abstract class BaseConnection
                     'Content-Type'  => 'application/json',
                     'Authorization' => 'Basic '.base64_encode($this->config('user').':'.$this->config('pass')),
                 ],
-            ])->getHeader('X-FM-Data-Access-Token')[ 0 ];
+            ])->getHeader('X-FM-Data-Access-Token');
 
+            if (count($token) === 0) {
+                throw TokenException::noTokenReturned();
+            }
+
+            $token = $token[0];
             Cache::put('fm_token', $token, 60 * 14);
 
             return $this->token = $token;
         } catch (ClientException $e) {
-            throw new FilemakerException('Filemaker access unauthorized - please check your credentials', 401);
+            throw TokenException::unauthorized();
         }
     }
 }

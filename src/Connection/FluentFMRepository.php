@@ -6,14 +6,12 @@ use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use o2o\FluentFM\Contract\FluentFM;
+use o2o\FluentFM\Exception\FilemakerException;
 use Ramsey\Uuid\Uuid;
 use RuntimeException;
 use function array_slice;
 use function is_array;
 
-/**
- * Class FluentFMRepository.
- */
 class FluentFMRepository extends BaseConnection implements FluentFM
 {
 
@@ -28,22 +26,20 @@ class FluentFMRepository extends BaseConnection implements FluentFM
         $this->clearQuery();
     }
 
-    public function getClient()
+    public function getClient() : Client
     {
         return $this->client;
     }
 
-    public function getClientHeaders()
+    public function getClientHeaders() : array
     {
-        $headers = [
+        return [
             'Authorization' => 'Bearer ' . $this->getToken(),
             'Content-Type'  => 'application/json',
             'Accept'        => 'application/json',
             'cache-control' => 'no-cache',
             'read_timeout'  => 30000
         ];
-
-        return $headers;
     }
 
     /**
@@ -127,14 +123,7 @@ class FluentFMRepository extends BaseConnection implements FluentFM
         return $this->exec();
     }
 
-    /**
-     * TODO: check if this is still needed (not used in FHT)
-     * Creates new filemaker record on table.
-     *
-     * @param array  $body
-     * @throws FilemakerException
-     * @return int|mixed
-     */
+    /** {@inheritDoc} */
     public function broadcast(array $body )
     {
         $layout = 'API_request';
@@ -147,34 +136,6 @@ class FluentFMRepository extends BaseConnection implements FluentFM
 
             Response::check( $response, [ 'fieldData' => array_filter( $body ) ] );
             return (int) Response::body( $response )->response->recordId;
-        };
-
-        return $this->exec();
-    }
-
-
-
-    /**
-     * {@inheritdoc}
-     */
-    public function globals(string $layout, array $fields = []) : bool
-    {
-        $this->callback = function () use ($layout, $fields) {
-            $globals = [];
-
-            foreach ($fields as $key => $value) {
-                $globals[ $layout . '::' . $key ] = $value;
-            }
-
-            $response = $this->client->patch(Url::globals(), [
-                'Content-Type' => 'application/json',
-                'headers'      => $this->authHeader(),
-                'json'         => [ 'globalFields' => array_filter($globals) ],
-            ]);
-
-            Response::check($response, [ 'globalFields' => array_filter($globals) ]);
-
-            return true;
         };
 
         return $this->exec();
@@ -504,7 +465,7 @@ class FluentFMRepository extends BaseConnection implements FluentFM
      */
     public function first()
     {
-        return array_slice($this->get(), 0, 1)[ 0 ];
+        return array_shift($this->get());
     }
 
 
@@ -513,6 +474,14 @@ class FluentFMRepository extends BaseConnection implements FluentFM
      */
     public function last()
     {
-        return array_slice($this->get(), -1, 1)[ 0 ];
+        return array_pop($this->get());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function globals(string $layout, array $fields = []): bool
+    {
+        // TODO: Implement globals() method.
     }
 }

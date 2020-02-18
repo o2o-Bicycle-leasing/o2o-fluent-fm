@@ -96,7 +96,6 @@ class Response
 
         switch ($message->code) {
             case 0:
-                return;
             case 401:
                 return;
             case 102:
