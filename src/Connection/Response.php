@@ -6,16 +6,12 @@ use o2o\FluentFM\Exception\ExceptionMessages;
 use o2o\FluentFM\Exception\FilemakerException;
 use Psr\Http\Message\ResponseInterface;
 
-/**
- * Class Response.
- */
+use function json_decode;
+
 class Response
 {
-
     /**
      * Get response body contents.
-     *
-     * @param ResponseInterface $response
      *
      * @return mixed
      */
@@ -26,49 +22,43 @@ class Response
         return json_decode($response->getBody()->getContents());
     }
 
-
     /**
      * Get response returned records.
      *
-     * @param ResponseInterface $response
-     * @param bool              $with_portals
-     *
      * @return array
      */
-    public static function records(ResponseInterface $response, bool $with_portals = false) : array
+    public static function records(ResponseInterface $response, bool $with_portals = false): array
     {
         $records = [];
 
         if (isset(static::body($response)->response->data)) {
             foreach (static::body($response)->response->data as $record) {
-                $records[$record->recordId] = $with_portals ? (array)$record : self::generateResponse($record);
+                $records[$record->recordId] = $with_portals ? (array) $record : self::generateResponse($record);
             }
         }
 
         return $records;
     }
 
-    public static function generateResponse($record) {
-        $fieldData = (array)$record->fieldData;
+    public static function generateResponse($record)
+    {
+        $fieldData = (array) $record->fieldData;
 
-        if (!isset($fieldData['recordId'])) {
-            $fieldData['recordId'] = (int)$record->recordId;
+        if (! isset($fieldData['recordId'])) {
+            $fieldData['recordId'] = (int) $record->recordId;
         }
 
         return $fieldData;
     }
 
-
     /**
      * Get response returned message.
-     *
-     * @param ResponseInterface $response
      *
      * @return mixed
      */
     public static function message(ResponseInterface $response)
     {
-        $message = static::body($response)->messages[ 0 ];
+        $message = static::body($response)->messages[0];
 
         if ($message->code === '0') {
             return;
@@ -77,14 +67,12 @@ class Response
         return $message;
     }
 
-
     /**
-     * @param ResponseInterface $response
-     * @param array             $query
+     * @param array $query
      *
      * @throws FilemakerException
      */
-    public static function check(ResponseInterface $response, array $query) : void
+    public static function check(ResponseInterface $response, array $query): void
     {
         $body = static::body($response);
 
@@ -92,7 +80,7 @@ class Response
             return;
         }
 
-        $message = $body->messages[ 0 ];
+        $message = $body->messages[0];
 
         switch ($message->code) {
             case 0:
