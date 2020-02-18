@@ -43,12 +43,12 @@ class FluentFMRepository extends BaseConnection implements FluentFM
         $this->clearQuery();
     }
 
-    public function getClient() : Client
+    public function getClient(): Client
     {
         return $this->client;
     }
 
-    public function getClientHeaders() : array
+    public function getClientHeaders(): array
     {
         return [
             'Authorization' => 'Bearer ' . $this->getToken(),
