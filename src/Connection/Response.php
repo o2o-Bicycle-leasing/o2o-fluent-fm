@@ -4,6 +4,7 @@ namespace o2o\FluentFM\Connection;
 
 use o2o\FluentFM\Exception\ExceptionMessages;
 use o2o\FluentFM\Exception\FilemakerException;
+use o2o\FluentFM\Exception\TokenException;
 use Psr\Http\Message\ResponseInterface;
 
 use function json_decode;
@@ -84,7 +85,6 @@ class Response
 
         switch ($message->code) {
             case 0:
-                return;
             case 401:
                 return;
             case 102:
@@ -97,6 +97,9 @@ class Response
                     ExceptionMessages::fieldInvalid($message, $query),
                     $message->code
                 );
+            case 952:
+                throw TokenException::invalid();
+                break;
             default:
                 throw new FilemakerException(
                     ExceptionMessages::generic($message, $query),

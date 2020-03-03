@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Support\Facades\Cache;
 use o2o\FluentFM\Exception\FilemakerException;
+use o2o\FluentFM\Exception\TokenException;
 
 use function base64_encode;
 use function is_null;
@@ -99,11 +100,16 @@ abstract class BaseConnection
                 ],
             ])->getHeader('X-FM-Data-Access-Token')[0];
 
+            if (count($token) === 0) {
+                throw TokenException::noTokenReturned();
+            }
+
+            $token = $token[0];
             Cache::put('fm_token', $token, 60 * 14);
 
             return $this->token = $token;
         } catch (ClientException $e) {
-            throw new FilemakerException('Filemaker access unauthorized - please check your credentials', 401);
+            throw TokenException::unauthorized();
         }
     }
 }

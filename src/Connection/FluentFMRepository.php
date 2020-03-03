@@ -5,6 +5,7 @@ namespace o2o\FluentFM\Connection;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use o2o\FluentFM\Contract\FluentFM;
+use o2o\FluentFM\Exception\FilemakerException;
 use Ramsey\Uuid\Uuid;
 use RuntimeException;
 use Throwable;
@@ -42,12 +43,12 @@ class FluentFMRepository extends BaseConnection implements FluentFM
         $this->clearQuery();
     }
 
-    public function getClient()
+    public function getClient(): Client
     {
         return $this->client;
     }
 
-    public function getClientHeaders()
+    public function getClientHeaders(): array
     {
         return [
             'Authorization' => 'Bearer ' . $this->getToken(),
