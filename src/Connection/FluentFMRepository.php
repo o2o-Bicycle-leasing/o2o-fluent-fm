@@ -497,7 +497,8 @@ class FluentFMRepository extends BaseConnection implements FluentFM
      */
     public function first()
     {
-        return array_shift($this->getResultForCurrentQuery());
+        $result = $this->getResultForCurrentQuery();
+        return array_shift($result);
     }
 
     /**
@@ -505,8 +506,8 @@ class FluentFMRepository extends BaseConnection implements FluentFM
      */
     public function last()
     {
-
-        return array_pop($this->getResultForCurrentQuery());
+        $result = $this->getResultForCurrentQuery();
+        return array_pop($result);
     }
 
     private function getResultForCurrentQuery(): array
