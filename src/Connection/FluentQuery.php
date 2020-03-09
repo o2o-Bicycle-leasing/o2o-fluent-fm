@@ -122,11 +122,11 @@ trait FluentQuery
 
     /**
      * @param       $field
-     * @param array $params
+     * @param array|string $params
      *
      * @return self|FluentFM
      */
-    public function where($field, array ...$params): FluentFM
+    public function where($field, ...$params): FluentFM
     {
         switch (count($params)) {
             case 1:
