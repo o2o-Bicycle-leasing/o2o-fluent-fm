@@ -13,20 +13,16 @@ class Response
 {
     /**
      * Get response body contents.
-     *
-     * @return mixed
      */
     public static function body(ResponseInterface $response)
     {
         $response->getBody()->rewind();
 
-        return json_decode($response->getBody()->getContents());
+        return json_decode($response->getBody()->getContents(), false);
     }
 
     /**
      * Get response returned records.
-     *
-     * @return array
      */
     public static function records(ResponseInterface $response, bool $with_portals = false): array
     {
@@ -41,7 +37,7 @@ class Response
         return $records;
     }
 
-    public static function generateResponse($record)
+    public static function generateResponse($record): array
     {
         $fieldData = (array) $record->fieldData;
 
@@ -54,8 +50,6 @@ class Response
 
     /**
      * Get response returned message.
-     *
-     * @return mixed
      */
     public static function message(ResponseInterface $response)
     {

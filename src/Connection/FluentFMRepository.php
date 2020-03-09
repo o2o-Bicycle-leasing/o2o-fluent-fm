@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use o2o\FluentFM\Contract\FluentFM;
 use o2o\FluentFM\Exception\FilemakerException;
+use o2o\FluentFM\Exception\NoResultException;
 use Ramsey\Uuid\Uuid;
 use RuntimeException;
 use Throwable;
@@ -138,7 +139,6 @@ class FluentFMRepository extends BaseConnection implements FluentFM
     }
 
     /**
-     * TODO: check if this is still needed (not used in FHT)
      * Creates new filemaker record on table.
      *
      * @param array $body
@@ -497,7 +497,7 @@ class FluentFMRepository extends BaseConnection implements FluentFM
      */
     public function first()
     {
-        return array_slice($this->get(), 0, 1)[0];
+        return array_shift($this->getResultForCurrentQuery());
     }
 
     /**
@@ -505,6 +505,19 @@ class FluentFMRepository extends BaseConnection implements FluentFM
      */
     public function last()
     {
-        return array_slice($this->get(), -1, 1)[0];
+
+        return array_pop($this->getResultForCurrentQuery());
+    }
+
+    private function getResultForCurrentQuery(): array
+    {
+        $query = $this->query;
+
+        $result = $this->get();
+        if (count($result) === 0) {
+            throw NoResultException::noResultForQuery($query);
+        }
+
+        return $result;
     }
 }
