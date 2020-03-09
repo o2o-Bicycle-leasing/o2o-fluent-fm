@@ -9,9 +9,9 @@ use o2o\FluentFM\Connection\FluentFMRepository;
 
 class FluentFmRepositoryStub extends FluentFMRepository
 {
-    public function __construct()
+    public function __construct($config, $client)
     {
-        parent::__construct(['host' => 'host', 'file' => 'file'], null);
+        parent::__construct(['host' => 'host', 'file' => 'file'], $client);
     }
 
     public function getQuery(): array
