@@ -98,7 +98,7 @@ abstract class BaseConnection
                     'Content-Type'  => 'application/json',
                     'Authorization' => 'Basic ' . base64_encode($this->config('user') . ':' . $this->config('pass')),
                 ],
-            ])->getHeader('X-FM-Data-Access-Token')[0];
+            ])->getHeader('X-FM-Data-Access-Token');
 
             if (count($token) === 0) {
                 throw TokenException::noTokenReturned();
