@@ -9,6 +9,11 @@ use o2o\FluentFM\Connection\FluentFMRepository;
 
 class FluentFmRepositoryStub extends FluentFMRepository
 {
+    public function getWithDeleted(): bool
+    {
+        return $this->with_deleted;
+    }
+
     public function __construct($config, $client)
     {
         parent::__construct(['host' => 'host', 'file' => 'file'], $client);
