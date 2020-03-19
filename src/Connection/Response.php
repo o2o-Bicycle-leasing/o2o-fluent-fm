@@ -83,12 +83,12 @@ class Response
                 return;
             case 102:
                 throw new FilemakerException(
-                    ExceptionMessages::fieldMissing($message, $query),
+                    ExceptionMessages::fieldMissing((string)$message, $query),
                     $message->code
                 );
             case 509:
                 throw new FilemakerException(
-                    ExceptionMessages::fieldInvalid($message, $query),
+                    ExceptionMessages::fieldInvalid((string)$message, $query),
                     $message->code
                 );
             case 952:
@@ -96,7 +96,7 @@ class Response
                 break;
             default:
                 throw new FilemakerException(
-                    ExceptionMessages::generic($message, $query),
+                    ExceptionMessages::generic((string)$message, $query),
                     $message->code
                 );
         }
