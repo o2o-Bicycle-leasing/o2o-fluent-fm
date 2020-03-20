@@ -20,7 +20,7 @@ use const PHP_SAPI;
 
 class ExceptionMessages
 {
-    protected static function baseMessage(string $message): string
+    protected static function baseMessage($message): string
     {
         return sprintf('FileMaker returned error %d - %s', $message->code, $message->message);
     }
