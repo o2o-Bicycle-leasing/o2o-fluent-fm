@@ -3,6 +3,7 @@
 namespace o2o\FluentFM\Contract;
 
 use o2o\FluentFM\Exception\FilemakerException;
+use o2o\FluentFM\Utils\PaginatedCollection;
 
 /**
  * Interface FluentFM.
@@ -35,6 +36,9 @@ interface FluentFM
      * @return mixed
      */
     public function find(string $layout);
+
+    /** @return PaginatedCollection[] */
+    public function findPaginated(string $layout, int $page = 1, int $perPage = 10);
 
     /**
      * Creates new filemaker record on table.

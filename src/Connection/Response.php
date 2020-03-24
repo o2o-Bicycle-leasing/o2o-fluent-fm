@@ -5,6 +5,7 @@ namespace o2o\FluentFM\Connection;
 use o2o\FluentFM\Exception\ExceptionMessages;
 use o2o\FluentFM\Exception\FilemakerException;
 use o2o\FluentFM\Exception\TokenException;
+use o2o\FluentFM\Utils\PaginatedCollection;
 use Psr\Http\Message\ResponseInterface;
 
 use function json_decode;
@@ -35,6 +36,20 @@ class Response
         }
 
         return $records;
+    }
+
+    public static function paginatedRecords(
+        ResponseInterface $response,
+        int $page,
+        int $perPage,
+        bool $with_portals = false
+    ): PaginatedCollection {
+        return new PaginatedCollection(
+            static::records($response, $with_portals),
+            (int) static::body($response)->response->dataInfo->foundCount,
+            $perPage,
+            $page
+        );
     }
 
     public static function generateResponse($record): array

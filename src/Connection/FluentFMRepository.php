@@ -110,6 +110,26 @@ class FluentFMRepository extends BaseConnection implements FluentFM
         return $this;
     }
 
+    public function findPaginated(string $layout, int $page = 1, int $perPage = 10): FluentFM
+    {
+        $this->callback = function () use ($layout, $page, $perPage) {
+            $this->limit($perPage);
+            $this->offset(($page - 1) * $perPage);
+
+            $response = $this->client->post(Url::find($layout), [
+                'Content-Type' => 'application/json',
+                'headers'      => $this->authHeader(),
+                'json'         => array_filter($this->query),
+            ]);
+
+            Response::check($response, array_filter($this->query));
+
+            return Response::paginatedRecords($response, $page, $perPage, $this->with_portals);
+        };
+
+        return $this;
+    }
+
     /**
      * {@inheritdoc}
      */

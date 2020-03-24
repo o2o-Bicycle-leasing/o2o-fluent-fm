@@ -53,6 +53,14 @@ class FluentQueryStub implements FluentFM
     /**
      * @inheritDoc
      */
+    public function findPaginated(string $layout, int $page = 1, int $perPage = 10)
+    {
+        // TODO: Implement find() method.
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function create(string $layout, array $fields = [])
     {
         // TODO: Implement create() method.
