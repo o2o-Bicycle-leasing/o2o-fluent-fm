@@ -37,7 +37,7 @@ interface FluentFM
      */
     public function find(string $layout);
 
-    /** @return PaginatedCollection[] */
+    /** @return FluentFM */
     public function findPaginated(string $layout, int $page = 1, int $perPage = 10);
 
     /**
