@@ -47,7 +47,6 @@ class FluentQueryStub implements FluentFM
      */
     public function find(string $layout)
     {
-        // TODO: Implement find() method.
     }
 
     /**
@@ -55,7 +54,6 @@ class FluentQueryStub implements FluentFM
      */
     public function findPaginated(string $layout, int $page = 1, int $perPage = 10)
     {
-        // TODO: Implement find() method.
     }
 
     /**
@@ -63,7 +61,6 @@ class FluentQueryStub implements FluentFM
      */
     public function create(string $layout, array $fields = [])
     {
-        // TODO: Implement create() method.
     }
 
     /**
@@ -71,7 +68,6 @@ class FluentQueryStub implements FluentFM
      */
     public function globals(string $layout, array $fields = []): bool
     {
-        // TODO: Implement globals() method.
     }
 
     /**
@@ -132,7 +128,6 @@ class FluentQueryStub implements FluentFM
      */
     public function exec()
     {
-        // TODO: Implement exec() method.
     }
 
     /**
