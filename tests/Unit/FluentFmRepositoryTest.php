@@ -23,7 +23,7 @@ class FluentFmRepositoryTest extends TestCase
 
     public function setUp(): void
     {
-        $response = new Response(200, [], '{"response": {"recordId": "1"}}');
+        $response = new Response(200, [], '{"response": {"recordId": "1", "dataInfo": {"foundCount": 0}}}');
         $history = Middleware::history($this->container);
         $handlerStack = HandlerStack::create(new MockHandler([$response]));
         $handlerStack->push($history);
@@ -86,6 +86,24 @@ class FluentFmRepositoryTest extends TestCase
 
         $request = $this->popLastRequest();
         $this->assertPost($request, 'layouts/layout/_find', '{"query":[{"param":"=value"}]}');
+    }
+
+    public function testFindPaginated()
+    {
+        $repo = new FluentFmRepositoryStub([], $this->httpClient);
+        $repo->findPaginated('layout')->where('param', 'value')->get();
+
+        $request = $this->popLastRequest();
+        $this->assertPost($request, 'layouts/layout/_find', '{"limit":10,"query":[{"param":"=value"}]}');
+    }
+
+    public function testFindPaginatedNextPage()
+    {
+        $repo = new FluentFmRepositoryStub([], $this->httpClient);
+        $repo->findPaginated('layout', 2)->where('param', 'value')->get();
+
+        $request = $this->popLastRequest();
+        $this->assertPost($request, 'layouts/layout/_find', '{"limit":10,"offset":10,"query":[{"param":"=value"}]}');
     }
 
     public function testCreate()

@@ -1,0 +1,95 @@
+{
+  "response": {
+    "dataInfo": {
+      "database": "o2o Backoffice Dev v19",
+      "layout": "Endpoint_String",
+      "table": "String",
+      "totalRecordCount": 93,
+      "foundCount": 93,
+      "returnedCount": 5
+    },
+    "data": [
+      {
+        "fieldData": {
+          "StringID": 1010,
+          "Type": "Status",
+          "Scope": "Bestelling",
+          "Omschrijving": "Start",
+          "Tekst Nl": "Start",
+          "Tekst Fr": "",
+          "Tekst En": "",
+          "Kleurcode": "grijs"
+        },
+        "portalData": {},
+        "recordId": "291",
+        "modId": "0"
+      },
+      {
+        "fieldData": {
+          "StringID": 1020,
+          "Type": "Status",
+          "Scope": "Bestelling",
+          "Omschrijving": "Bestelbon opgestuurd naar dealer",
+          "Tekst Nl": "Bestelbon opgestuurd",
+          "Tekst Fr": "Bon de commande envoyé",
+          "Tekst En": "Order form sent",
+          "Kleurcode": "geel"
+        },
+        "portalData": {},
+        "recordId": "292",
+        "modId": "0"
+      },
+      {
+        "fieldData": {
+          "StringID": 1030,
+          "Type": "Status",
+          "Scope": "Bestelling",
+          "Omschrijving": "Bestelbon goedgekeurd",
+          "Tekst Nl": "Wachten op SP docs",
+          "Tekst Fr": "Attente SP docs",
+          "Tekst En": "Waiting for SP docs",
+          "Kleurcode": "geel"
+        },
+        "portalData": {},
+        "recordId": "293",
+        "modId": "2"
+      },
+      {
+        "fieldData": {
+          "StringID": 1050,
+          "Type": "Status",
+          "Scope": "Bestelling",
+          "Omschrijving": "Administratie speed pedelec ok",
+          "Tekst Nl": "Administratie speed pedelec ok",
+          "Tekst Fr": "(dev edit3)",
+          "Tekst En": "",
+          "Kleurcode": "geel"
+        },
+        "portalData": {},
+        "recordId": "294",
+        "modId": "0"
+      },
+      {
+        "fieldData": {
+          "StringID": 1060,
+          "Type": "Status",
+          "Scope": "Bestelling",
+          "Omschrijving": "Wachten op levering fiets aan dealer",
+          "Tekst Nl": "Wachten op levering fiets aan dealer",
+          "Tekst Fr": "Attente livraison",
+          "Tekst En": "Waiting for delivery",
+          "Kleurcode": "groen"
+        },
+        "portalData": {},
+        "recordId": "295",
+        "modId": "0"
+      }
+    ]
+  },
+  "messages": [
+    {
+      "code": "0",
+      "message": "OK"
+    }
+  ]
+}
