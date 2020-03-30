@@ -2,11 +2,10 @@
 
 namespace o2o\FluentFM\Utils;
 
-class PaginatedCollection
-{
-    /** @var int */
-    private $totalCount;
+use o2o\FluentFM\Contract;
 
+class PaginatedCollection extends Collection implements Contract\PaginatedCollection
+{
     /** @var int */
     private $currentPage;
 
@@ -16,17 +15,15 @@ class PaginatedCollection
     /** @var array */
     private $data;
 
-    public function __construct(array $data, int $totalCount, int $perPage, int $currentPage)
-    {
-        $this->currentPage = $currentPage;
-        $this->totalCount = $totalCount;
-        $this->perPage = $perPage;
-        $this->data = $data;
-    }
+    /** @var int */
+    private $totalCount;
 
-    public function getTotalItemCount(): int
+    public function __construct(Collection $collection, int $perPage, int $currentPage)
     {
-        return $this->totalCount;
+        $this->totalCount = $collection->getTotalItemCount();
+        $this->data = $collection->getData();
+        $this->currentPage = $currentPage;
+        $this->perPage = $perPage;
     }
 
     public function getCurrentPage(): int
@@ -41,12 +38,16 @@ class PaginatedCollection
 
     public function getPageCount(): int
     {
-        return ceil($this->totalCount/$this->perPage);
+        return ceil($this->getTotalItemCount() / $this->perPage);
+    }
+
+    public function getTotalItemCount(): int
+    {
+        return $this->totalCount;
     }
 
     public function getData(): array
     {
         return $this->data;
     }
-
 }

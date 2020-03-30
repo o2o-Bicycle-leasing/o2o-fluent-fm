@@ -5,7 +5,7 @@ namespace Tests\Unit;
 
 
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
-use o2o\FluentFM\Connection\Response;
+use o2o\FluentFM\Connection\ResponseHandler;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 
@@ -21,12 +21,12 @@ class ResponseTest extends TestCase
 
     public function testRecords()
     {
-        $this->assertCount(5, Response::records($this->response));
+        $this->assertCount(5, (new ResponseHandler($this->response))->getRecords());
     }
 
     public function testPaginatedRecords()
     {
-        $response = Response::paginatedRecords($this->response, 1, 5);
+        $response = (new ResponseHandler($this->response))->getPaginatedRecords(1, 5);
 
         $this->assertEquals(93, $response->getTotalItemCount());
         $this->assertEquals(1, $response->getCurrentPage());

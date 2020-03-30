@@ -76,15 +76,13 @@ class FluentFMRepository extends BaseConnection implements FluentFM
     public function records($layout, $id = null): FluentFM
     {
         $this->callback = function () use ($layout, $id) {
-            $response = $this->client->get(Url::records($layout, $id), [
+            $response = $this->client->get((new UrlGenerator($layout))->record($id), [
                 'Content-Type' => 'application/json',
                 'headers'      => $this->authHeader(),
                 'query'        => $this->queryString(),
             ]);
 
-            Response::check($response, $this->queryString());
-
-            return Response::records($response, $this->with_portals);
+            return (new ResponseHandler($response, $this->queryString()))->getRecords($this->with_portals);
         };
 
         return $this;
@@ -96,15 +94,13 @@ class FluentFMRepository extends BaseConnection implements FluentFM
     public function find(string $layout): FluentFM
     {
         $this->callback = function () use ($layout) {
-            $response = $this->client->post(Url::find($layout), [
+            $response = $this->client->post((new UrlGenerator($layout))->find(), [
                 'Content-Type' => 'application/json',
                 'headers'      => $this->authHeader(),
                 'json'         => array_filter($this->query),
             ]);
 
-            Response::check($response, array_filter($this->query));
-
-            return Response::records($response, $this->with_portals);
+            return (new ResponseHandler($response, array_filter($this->query)))->getRecords($this->with_portals);
         };
 
         return $this;
@@ -116,15 +112,13 @@ class FluentFMRepository extends BaseConnection implements FluentFM
             $this->limit($perPage);
             $this->offset(($page - 1) * $perPage);
 
-            $response = $this->client->post(Url::find($layout), [
+            $response = $this->client->post((new UrlGenerator($layout))->find(), [
                 'Content-Type' => 'application/json',
                 'headers'      => $this->authHeader(),
                 'json'         => array_filter($this->query),
             ]);
 
-            Response::check($response, array_filter($this->query));
-
-            return Response::paginatedRecords($response, $page, $perPage, $this->with_portals);
+            return (new ResponseHandler($response, array_filter($this->query)))->getPaginatedRecords($page, $perPage);
         };
 
         return $this;
@@ -133,7 +127,7 @@ class FluentFMRepository extends BaseConnection implements FluentFM
     /**
      * {@inheritdoc}
      */
-    public function create(string $layout, array $fields = [], array $portals = [])
+    public function create(string $layout, array $fields = [], array $portals = []): int
     {
         if (! array_key_exists('id', $fields) && $this->auto_id) {
             $fields['id'] = Uuid::uuid4()->toString();
@@ -144,42 +138,29 @@ class FluentFMRepository extends BaseConnection implements FluentFM
             if (count($portals) > 0) {
                 $json['portalData'] = $portals;
             }
-            $response = $this->client->post(Url::records($layout), [
+            $response = $this->client->post((new UrlGenerator($layout))->records(), [
                 'Content-Type' => 'application/json',
                 'headers'      => $this->authHeader(),
                 'json'         => $json,
             ]);
 
-            Response::check($response, [ 'fieldData' => $fields ]);
-
-            return (int) Response::body($response)->response->recordId;
+            return (new ResponseHandler($response, [ 'fieldData' => $fields ]))->getRecordId();
         };
 
         return $this->exec();
     }
 
-    /**
-     * Creates new filemaker record on table.
-     *
-     * @param array $body
-     *
-     * @return int|mixed
-     *
-     * @throws FilemakerException
-     */
-    public function broadcast(array $body)
+    public function broadcast(array $body): int
     {
         $layout         = 'API_request';
         $this->callback = function () use ($layout, $body) {
-            $response = $this->client->post(Url::records($layout), [
+            $response = $this->client->post((new UrlGenerator($layout))->records(), [
                 'Content-Type' => 'application/json',
                 'headers'      => $this->authHeader(),
                 'json'         => $body,
             ]);
 
-            Response::check($response, [ 'fieldData' => array_filter($body) ]);
-
-            return (int) Response::body($response)->response->recordId;
+            return (new ResponseHandler($response, [ 'fieldData' => array_filter($body) ]))->getRecordId();
         };
 
         return $this->exec();
@@ -197,13 +178,13 @@ class FluentFMRepository extends BaseConnection implements FluentFM
                 $globals[$layout . '::' . $key] = $value;
             }
 
-            $response = $this->client->patch(Url::globals(), [
+            $response = $this->client->patch((new UrlGenerator($layout))->globals(), [
                 'Content-Type' => 'application/json',
                 'headers'      => $this->authHeader(),
                 'json'         => [ 'globalFields' => array_filter($globals) ],
             ]);
 
-            Response::check($response, [ 'globalFields' => array_filter($globals) ]);
+            ResponseHandler::checkResult($response, [ 'globalFields' => array_filter($globals) ]);
 
             return true;
         };
@@ -240,13 +221,12 @@ class FluentFMRepository extends BaseConnection implements FluentFM
                 if (count($deleteRelated) > 0) {
                     $json['fieldData']['deleteRelated'] = $deleteRelated;
                 }
-                $response = $this->client->patch(Url::records($layout, $id), [
+                $response = $this->client->patch((new UrlGenerator($layout))->record($id), [
                     'Content-Type' => 'application/json',
                     'headers'      => $this->authHeader(),
                     'json'         => $json,
                 ]);
-
-                Response::check($response, [ 'fieldData' => $fields ]);
+                ResponseHandler::checkResult($response, [ 'fieldData' => $fields ]);
             }
         };
 
@@ -262,7 +242,7 @@ class FluentFMRepository extends BaseConnection implements FluentFM
             $recordIds = $recordId ? [ $recordId ] : array_keys($this->find($layout)->get());
 
             foreach ($recordIds as $id) {
-                $response = $this->client->post(Url::container($layout, $field, $id), [
+                $response = $this->client->post((new UrlGenerator($layout))->container($field, $id), [
                     'Content-Type' => 'multipart/form-data',
                     'headers'      => $this->authHeader(),
                     'multipart'    => [
@@ -274,7 +254,7 @@ class FluentFMRepository extends BaseConnection implements FluentFM
                     ],
                 ]);
 
-                Response::check($response, [
+                ResponseHandler::checkResult($response, [
                     'multipart' => [
                         [
                             'name'     => 'upload',
@@ -378,12 +358,12 @@ class FluentFMRepository extends BaseConnection implements FluentFM
             $recordIds = $recordId ? [ $recordId ] : array_keys($this->find($layout)->get());
 
             foreach ($recordIds as $id) {
-                $response = $this->client->delete(Url::records($layout, $id), [
+                $response = $this->client->delete((new UrlGenerator($layout))->record($id), [
                     'Content-Type' => 'application/json',
                     'headers'      => $this->authHeader(),
                 ]);
 
-                Response::check($response, $this->query);
+                ResponseHandler::checkResult($response, $this->query);
             }
 
             return true;
@@ -477,7 +457,7 @@ class FluentFMRepository extends BaseConnection implements FluentFM
                 $this->getToken();
                 $results = ( $this->callback )();
             } elseif ($e instanceof RequestException && $response = $e->getResponse()) {
-                Response::check($response, $this->query);
+                ResponseHandler::checkResult($response, $this->query);
             } else {
                 throw $e;
             }
