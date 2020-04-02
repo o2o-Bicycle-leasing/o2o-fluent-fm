@@ -37,6 +37,34 @@ class FluentQueryTest extends TestCase
         $this->assertEquals([['fieldName' => 'field', 'sortOrder' => 'descend']], $fm->getQuery()['sort']);
     }
 
+    public function testAndSortAscending()
+    {
+        $fm = new FluentQueryStub();
+        $fm->sort('field');
+        $fm->andSort('field2');
+        $this->assertEquals(
+            [
+                ['fieldName' => 'field', 'sortOrder' => 'ascend'],
+                ['fieldName' => 'field2', 'sortOrder' => 'ascend'],
+            ],
+            $fm->getQuery()['sort']
+        );
+    }
+
+    public function testAndSortDescending()
+    {
+        $fm = new FluentQueryStub();
+        $fm->sort('field', false);
+        $fm->andSort('field2', false);
+        $this->assertEquals(
+            [
+                ['fieldName' => 'field', 'sortOrder' => 'descend'],
+                ['fieldName' => 'field2', 'sortOrder' => 'descend'],
+            ],
+            $fm->getQuery()['sort']
+        );
+    }
+
     public function testWithPortals()
     {
         $fm = new FluentQueryStub();
