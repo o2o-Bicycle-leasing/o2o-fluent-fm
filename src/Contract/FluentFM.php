@@ -205,6 +205,27 @@ interface FluentFM
     public function sort(string $field, bool $ascending = true): self;
 
     /**
+     * Add field to sort results.
+     *
+     * @return FluentFM
+     */
+    public function andSort(string $field, bool $ascending = true): self;
+
+    /**
+     * Sort results by field and ValueList.
+     *
+     * @return FluentFM
+     */
+    public function sortByValueList(string $field, string $valueList): self;
+
+    /**
+     * And sort results by field and ValueList.
+     *
+     * @return FluentFM
+     */
+    public function andSortByValueList(string $field, string $valueList): self;
+
+    /**
      * Sort results ascending by field.
      *
      * @return FluentFM

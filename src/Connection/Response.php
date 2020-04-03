@@ -44,6 +44,15 @@ class Response
         int $perPage,
         bool $with_portals = false
     ): PaginatedCollection {
+        if (static::body($response)->messages[0]->code === '401') {
+            return new PaginatedCollection(
+                static::records($response, $with_portals),
+                0,
+                $perPage,
+                $page
+            );
+        }
+
         return new PaginatedCollection(
             static::records($response, $with_portals),
             (int) static::body($response)->response->dataInfo->foundCount,
