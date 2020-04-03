@@ -93,6 +93,39 @@ trait FluentQuery
     }
 
     /**
+     * Sort results by field and value list.
+     *
+     * @return self|FluentFM
+     */
+    public function sortByValueList(string $field, string $valueList): FluentFM
+    {
+        $this->query['sort'] = [
+            [
+                'fieldName' => $field,
+                'sortOrder' => $valueList,
+            ],
+        ];
+        return $this;
+    }
+
+    /**
+     * and sort results by field and value list.
+     *
+     * @return self|FluentFM
+     */
+    public function andSortByValueList(string $field, string $valueList): FluentFM
+    {
+        $this->query['sort'] = [
+            ...$this->query['sort'],
+            [
+                'fieldName' => $field,
+                'sortOrder' => $valueList,
+            ],
+        ];
+        return $this;
+    }
+
+    /**
      * Sort results descending by field.
      *
      * @return $this
