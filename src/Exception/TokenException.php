@@ -20,4 +20,9 @@ class TokenException extends FilemakerException
     {
         return new self('Invalid Filemaker Data API token - please refresh token', 401);
     }
+
+    public static function retryFailed(int $retries)
+    {
+        return new self('No token returned when sending request to Filemaker, retried ' . $retries . ' times without success');
+    }
 }

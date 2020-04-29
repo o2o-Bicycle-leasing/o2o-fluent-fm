@@ -4,6 +4,8 @@ namespace o2o\FluentFM\Connection;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Cache;
 use o2o\FluentFM\Exception\FilemakerException;
 use o2o\FluentFM\Exception\TokenException;
@@ -110,6 +112,48 @@ abstract class BaseConnection
             return $this->token = $token;
         } catch (ClientException $e) {
             throw TokenException::unauthorized();
+        } catch (RequestException $e) {
+            throw TokenException::noTokenReturned();
+        }
+    }
+
+    public function getTokenWithRetries($maxRetries = 5, $initialWait = 100, $exponent = 2): string
+    {
+        try {
+            $token = $this->retry(fn () => $this->getToken(), [TokenException::class], $maxRetries, $initialWait, $exponent);
+        } catch (ClientException $e) {
+            throw TokenException::retryFailed($maxRetries);
+        }
+        return $token;
+    }
+
+    protected function retry(
+        callable $callable,
+        array $expectedErrors,
+        $maxRetries = 6,
+        $initialWait = 100,
+        $exponent = 2
+    ) {
+        try {
+            return $callable();
+        } catch (\Exception $e) {
+            // get whole inheritance chain
+            $errors = class_parents($e);
+            array_push($errors, get_class($e));
+
+            // if unexpected, re-throw
+            if (!array_intersect($errors, $expectedErrors)) {
+                throw $e;
+            }
+
+            // exponential backoff
+            if ($maxRetries > 0) {
+                usleep($initialWait * 1E3);
+                return $this->retry($callable, $expectedErrors, $maxRetries - 1, $initialWait * $exponent, $exponent);
+            }
+
+            // max retries reached
+            throw $e;
         }
     }
 }
