@@ -7,6 +7,7 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Cache;
+use o2o\FluentFM\Exception\DataApiException;
 use o2o\FluentFM\Exception\FilemakerException;
 use o2o\FluentFM\Exception\TokenException;
 
@@ -120,7 +121,13 @@ abstract class BaseConnection
     public function getTokenWithRetries($maxRetries = 5, $initialWait = 100, $exponent = 2): string
     {
         try {
-            $token = $this->retry(fn () => $this->getToken(), [TokenException::class], $maxRetries, $initialWait, $exponent);
+            $token = $this->retry(
+                fn () => $this->getToken(),
+                [TokenException::class, DataApiException::class],
+                $maxRetries,
+                $initialWait,
+                $exponent
+            );
         } catch (ClientException $e) {
             throw TokenException::retryFailed($maxRetries);
         }

@@ -2,6 +2,7 @@
 
 namespace o2o\FluentFM\Connection;
 
+use o2o\FluentFM\Exception\DataApiException;
 use o2o\FluentFM\Exception\ExceptionMessages;
 use o2o\FluentFM\Exception\FilemakerException;
 use o2o\FluentFM\Exception\TokenException;
@@ -97,6 +98,10 @@ class Response
     public static function check(ResponseInterface $response, array $query): void
     {
         $body = static::body($response);
+
+        if ($response->getStatusCode() === 503) {
+            throw DataApiException::serviceUnavailable();
+        }
 
         if (! isset($body->messages)) {
             return;
