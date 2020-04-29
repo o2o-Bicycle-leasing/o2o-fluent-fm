@@ -4,6 +4,7 @@ namespace o2o\FluentFM\Connection;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use Illuminate\Support\Facades\Cache;
 use o2o\FluentFM\Contract\FluentFM;
 use o2o\FluentFM\Exception\FilemakerException;
 use o2o\FluentFM\Exception\NoResultException;
@@ -474,7 +475,8 @@ class FluentFMRepository extends BaseConnection implements FluentFM
             $results = ( $this->callback )();
         } catch (Throwable $e) {
             if ($e->getCode() === 401) {
-                $this->getToken();
+                Cache::forget('fm_token');
+                $this->getTokenWithRetries();
                 $results = ( $this->callback )();
             } elseif ($e instanceof RequestException && $response = $e->getResponse()) {
                 Response::check($response, $this->query);
