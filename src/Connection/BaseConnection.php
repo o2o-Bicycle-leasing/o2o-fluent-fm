@@ -52,7 +52,7 @@ abstract class BaseConnection
             'timeout'         => 60,
         ]);
 
-        $this->getToken();
+        $this->getTokenWithRetries();
     }
 
     /**
