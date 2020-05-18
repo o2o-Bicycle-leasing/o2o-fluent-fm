@@ -8,7 +8,7 @@ class TokenException extends FilemakerException
 {
     public static function noTokenReturned()
     {
-        return new self('No token returned when sending request to Filemaker');
+        return new self('No token returned when sending request to Filemaker', 401);
     }
 
     public static function unauthorized()
