@@ -41,12 +41,11 @@ class PaginatedCollection
 
     public function getPageCount(): int
     {
-        return ceil($this->totalCount/$this->perPage);
+        return ceil($this->totalCount / $this->perPage);
     }
 
     public function getData(): array
     {
         return $this->data;
     }
-
 }

@@ -10,6 +10,7 @@ class BaseConnectionStub extends BaseConnection
     {
         try {
             parent::__construct(['host' => 'host', 'file' => 'file'], null);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+        }
     }
 }

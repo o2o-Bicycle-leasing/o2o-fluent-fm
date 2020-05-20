@@ -543,4 +543,14 @@ class FluentFMRepository extends BaseConnection implements FluentFM
 
         return $result;
     }
+
+    public static function escapeFindRequest(string $param): string
+    {
+        $characters = ['@', '!', '*', '"', '?', '#', '=', '~'];
+        foreach ($characters as $character) {
+            $param = str_replace($character, '\\' . $character, $param);
+        }
+
+        return $param;
+    }
 }

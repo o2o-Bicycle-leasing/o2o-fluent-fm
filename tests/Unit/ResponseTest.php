@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Tests\Unit;
-
 
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
 use o2o\FluentFM\Connection\Response;
