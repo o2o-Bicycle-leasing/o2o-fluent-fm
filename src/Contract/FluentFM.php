@@ -251,7 +251,7 @@ interface FluentFM
 
     /**
      * @param       string $field
-     * @param       string ...$params
+     * @param   int|string ...$params
      *
      * @return FluentFM
      */
