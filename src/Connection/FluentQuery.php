@@ -151,7 +151,7 @@ trait FluentQuery
 
     /**
      * @param       string $field
-     * @param       string ...$params
+     * @param   int|string ...$params
      */
     public function where($field, ...$params): FluentFM
     {
