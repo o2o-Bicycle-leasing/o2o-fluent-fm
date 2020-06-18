@@ -14,15 +14,19 @@ class ResponseTest extends TestCase
 
     public function setUp(): void
     {
-        $this->response = new GuzzleResponse(200, [], file_get_contents(__DIR__ . '/../Stubs/response.json'));
+        $this->response = new GuzzleResponse(
+            200,
+            [],
+            (string) file_get_contents(__DIR__ . '/../Stubs/response.json')
+        );
     }
 
-    public function testRecords()
+    public function testRecords(): void
     {
         $this->assertCount(5, Response::records($this->response));
     }
 
-    public function testPaginatedRecords()
+    public function testPaginatedRecords(): void
     {
         $response = Response::paginatedRecords($this->response, 1, 5);
 

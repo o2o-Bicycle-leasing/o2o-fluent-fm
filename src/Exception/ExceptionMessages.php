@@ -20,14 +20,17 @@ use const PHP_SAPI;
 
 class ExceptionMessages
 {
+    /**
+     * @param mixed $message
+     */
     protected static function baseMessage($message): string
     {
         return sprintf('FileMaker returned error %d - %s', $message->code, $message->message);
     }
 
     /**
-     * @param       $message
-     * @param array   $query
+     * @param object $message
+     * @param array<string|int,array|mixed> $query
      */
     public static function generic($message, array $query): string
     {
@@ -39,8 +42,8 @@ class ExceptionMessages
     }
 
     /**
-     * @param       $message
-     * @param array   $query
+     * @param object  $message
+     * @param array<string|int,mixed> $query
      */
     public static function fieldMissing($message, array $query): string
     {
@@ -58,8 +61,8 @@ class ExceptionMessages
     }
 
     /**
-     * @param       $message
-     * @param array   $query
+     * @param object  $message
+     * @param array<string|int,array|mixed> $query
      */
     public static function fieldInvalid($message, array $query): string
     {
@@ -113,7 +116,7 @@ Note:: This payload does seem to be <fg=white;options=bold>missing the `id` fiel
     protected static function format(string $message): string
     {
         if (PHP_SAPI !== 'cli') {
-            return preg_replace('/=+/', '=', strip_tags($message));
+            return preg_replace('/=+/', '=', strip_tags($message)) ?? '';
         }
 
         return $message;
@@ -128,19 +131,28 @@ Note:: This payload does seem to be <fg=white;options=bold>missing the `id` fiel
      *   'like' => 'this',
      * ];
      *
-     * @param array $query
+     * @param array<string|int,mixed> $query
      */
     protected static function queryDump(array $query): string
     {
         $export = var_export($query, true);
         $export = preg_replace('/^([ ]*)(.*)/m', '  $1$2', $export);
+        if (!$export) {
+            return '';
+        }
+
         $array  = preg_split("/\r\n|\n|\r/", $export);
+        if (!$array) {
+            return '';
+        }
+
         $array  = preg_replace(
             [ '/\s*array\s\($/', '/\)(,)?$/', '/\s=>\s$/', '/NULL/' ],
             [ null, ']$1', ' => [', 'null' ],
             $array
         );
 
+        // @phpstan-ignore-next-line
         return PHP_EOL . '  <fg=white>$payload = ' . implode(PHP_EOL, array_filter([ '[' ] + $array)) . ';</>';
     }
 }

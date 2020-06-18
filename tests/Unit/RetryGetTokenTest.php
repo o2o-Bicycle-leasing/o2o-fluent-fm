@@ -15,7 +15,7 @@ class RetryGetTokenTest extends TestCase
     public function testSucceeds(): void
     {
         $connection = new class extends BaseConnectionStub {
-            public function getToken($force = false): string
+            public function getToken(bool $force = false): string
             {
                 return 'token';
             }
@@ -30,7 +30,7 @@ class RetryGetTokenTest extends TestCase
         $connection = new class extends BaseConnectionStub {
             public int $retries = -2; //initial in constructor + first call doesn't count
 
-            public function getToken($force = false): string
+            public function getToken(bool $force = false): string
             {
                 $this->retries++;
                 throw new TokenException('token error');
@@ -49,7 +49,7 @@ class RetryGetTokenTest extends TestCase
         $connection = new class extends BaseConnectionStub {
             public int $retries = -2; //initial in constructor + first call doesn't count
 
-            public function getToken($force = false): string
+            public function getToken(bool $force = false): string
             {
                 $this->retries++;
                 if ($this->retries === 2) {

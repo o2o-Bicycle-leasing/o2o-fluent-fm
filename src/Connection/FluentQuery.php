@@ -12,7 +12,7 @@ use function strpos;
  */
 trait FluentQuery
 {
-    /** @var array */
+    /** @var array<string,array|mixed> */
     protected $query;
 
     /** @var bool */
@@ -23,8 +23,6 @@ trait FluentQuery
 
     /**
      * Limit the number of results returned.
-     *
-     * @return self|FluentFM
      */
     public function limit(int $limit): FluentFM
     {
@@ -35,8 +33,6 @@ trait FluentQuery
 
     /**
      * Begin result set at the given record id.
-     *
-     * @return self|FluentFMRepository
      */
     public function offset(int $offset): FluentFM
     {
@@ -47,8 +43,6 @@ trait FluentQuery
 
     /**
      * Sort results ascending by field.
-     *
-     * @return $this
      */
     public function sortAsc(string $field): FluentFM
     {
@@ -59,8 +53,6 @@ trait FluentQuery
 
     /**
      * Sort results by field.
-     *
-     * @return self|FluentFM
      */
     public function sort(string $field, bool $ascending = true): FluentFM
     {
@@ -76,8 +68,6 @@ trait FluentQuery
 
     /**
      * Add field to sort results.
-     *
-     * @return self|FluentFM
      */
     public function andSort(string $field, bool $ascending = true): FluentFM
     {
@@ -94,8 +84,6 @@ trait FluentQuery
 
     /**
      * Sort results by field and value list.
-     *
-     * @return self|FluentFM
      */
     public function sortByValueList(string $field, string $valueList): FluentFM
     {
@@ -110,8 +98,6 @@ trait FluentQuery
 
     /**
      * and sort results by field and value list.
-     *
-     * @return self|FluentFM
      */
     public function andSortByValueList(string $field, string $valueList): FluentFM
     {
@@ -127,8 +113,6 @@ trait FluentQuery
 
     /**
      * Sort results descending by field.
-     *
-     * @return $this
      */
     public function sortDesc(string $field): FluentFM
     {
@@ -139,8 +123,6 @@ trait FluentQuery
 
     /**
      * Include portal data in results.
-     *
-     * @return self|FluentFM
      */
     public function withPortals(): FluentFM
     {
@@ -151,8 +133,6 @@ trait FluentQuery
 
     /**
      * Don't include portal data in results.
-     *
-     * @return self|FluentFM
      */
     public function withoutPortals(): FluentFM
     {
@@ -162,9 +142,7 @@ trait FluentQuery
     }
 
     /**
-     * @param $field
-     *
-     * @return self|FluentFM
+     * @param string $field
      */
     public function whereEmpty($field): FluentFM
     {
@@ -172,10 +150,8 @@ trait FluentQuery
     }
 
     /**
-     * @param       $field
-     * @param array|string $params
-     *
-     * @return self|FluentFM
+     * @param       string $field
+     * @param       string ...$params
      */
     public function where($field, ...$params): FluentFM
     {
@@ -195,6 +171,9 @@ trait FluentQuery
         return $this;
     }
 
+    /**
+     * @var array $criteria
+     */
     public function whereCriteria($criteria): FluentFM
     {
         $this->query['query'] = $criteria;
@@ -202,24 +181,18 @@ trait FluentQuery
         return $this;
     }
 
-    /**
-     * @return self|FluentFM
-     */
     public function whereNotEmpty(string $field): FluentFM
     {
         return $this->has($field);
     }
 
-    /**
-     * @return self|FluentFM
-     */
     public function has(string $field): FluentFM
     {
         return $this->where($field, '*');
     }
 
     /**
-     * @return array
+     * @return array<string,string|array>
      */
     public function queryString(): array
     {
@@ -241,9 +214,7 @@ trait FluentQuery
     /**
      * Run FileMaker script with param before requested action.
      *
-     * @param null $param
-     *
-     * @return self|FluentFM
+     * @param null|mixed $param
      */
     public function prerequest(string $script, $param = null): FluentFM
     {
@@ -254,9 +225,7 @@ trait FluentQuery
      * Run FileMaker script with param. If no type specified script will run
      * after requested action and sorting is complete.
      *
-     * @param null $param
-     *
-     * @return self|FluentFM
+     * @param null|mixed $param
      */
     public function script(string $script, $param = null, ?string $type = null): FluentFM
     {
@@ -275,9 +244,7 @@ trait FluentQuery
     /**
      * Run FileMaker script with param after requested action but before sort.
      *
-     * @param null $param
-     *
-     * @return self|FluentFM
+     * @param null|mixed $param
      */
     public function presort(string $script, $param = null): FluentFM
     {
@@ -306,8 +273,6 @@ trait FluentQuery
 
     /**
      * Clear query parameters.
-     *
-     * @return self|FluentFM
      */
     protected function clearQuery(): FluentFM
     {

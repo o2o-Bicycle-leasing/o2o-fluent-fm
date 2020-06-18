@@ -20,20 +20,20 @@ abstract class BaseConnection
     /** @var Client */
     protected $client;
 
-    /** @var */
+    /** @var callable */
     protected $callback;
 
-    /** @var array */
+    /** @var array<string, string|array> */
     protected $config;
 
     /** @var string */
     protected $token;
 
-    /** @var array */
+    /** @var array<string, array> */
     protected $field_cache = [];
 
     /**
-     * @param array $config
+     * @param array<string, string|array> $config
      *
      * @throws FilemakerException
      */
@@ -69,7 +69,7 @@ abstract class BaseConnection
     /**
      * Generate authorization header.
      *
-     * @return array
+     * @return array<string, string>
      *
      * @throws FilemakerException
      */
@@ -89,7 +89,7 @@ abstract class BaseConnection
      *
      * @throws FilemakerException
      */
-    public function getToken($force = false): string
+    public function getToken(bool $force = false): string
     {
         if (! $force && Cache::has('fm_token') && ! is_null(Cache::get('fm_token'))) {
             return $this->token = Cache::get('fm_token');
@@ -118,7 +118,7 @@ abstract class BaseConnection
         }
     }
 
-    public function getTokenWithRetries($maxRetries = 5, $initialWait = 100, $exponent = 2): string
+    public function getTokenWithRetries(int $maxRetries = 5, int $initialWait = 100, int $exponent = 2): string
     {
         try {
             $token = $this->retry(
@@ -134,12 +134,16 @@ abstract class BaseConnection
         return $token;
     }
 
+    /**
+     * @param array<int, string> $expectedErrors
+     * @return mixed
+     */
     protected function retry(
         callable $callable,
         array $expectedErrors,
-        $maxRetries = 6,
-        $initialWait = 100,
-        $exponent = 2
+        int $maxRetries = 6,
+        int $initialWait = 100,
+        int $exponent = 2
     ) {
         try {
             return $callable();
@@ -155,7 +159,7 @@ abstract class BaseConnection
 
             // exponential backoff
             if ($maxRetries > 0) {
-                usleep($initialWait * 1E3);
+                usleep((int) ($initialWait * 1E3));
                 return $this->retry($callable, $expectedErrors, $maxRetries - 1, $initialWait * $exponent, $exponent);
             }
 

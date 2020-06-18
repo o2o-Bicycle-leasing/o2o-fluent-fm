@@ -9,35 +9,35 @@ use Tests\Stubs\FluentQueryStub;
 
 class FluentQueryTest extends TestCase
 {
-    public function testLimit()
+    public function testLimit(): void
     {
         $fm = new FluentQueryStub();
         $fm->limit(10);
         $this->assertEquals(10, $fm->getQuery()['limit']);
     }
 
-    public function testOffset()
+    public function testOffset(): void
     {
         $fm = new FluentQueryStub();
         $fm->offset(10);
         $this->assertEquals(10, $fm->getQuery()['offset']);
     }
 
-    public function testSortAsc()
+    public function testSortAsc(): void
     {
         $fm = new FluentQueryStub();
         $fm->sortAsc('field');
         $this->assertEquals([['fieldName' => 'field', 'sortOrder' => 'ascend']], $fm->getQuery()['sort']);
     }
 
-    public function testSortDesc()
+    public function testSortDesc(): void
     {
         $fm = new FluentQueryStub();
         $fm->sortDesc('field');
         $this->assertEquals([['fieldName' => 'field', 'sortOrder' => 'descend']], $fm->getQuery()['sort']);
     }
 
-    public function testAndSortAscending()
+    public function testAndSortAscending(): void
     {
         $fm = new FluentQueryStub();
         $fm->sort('field');
@@ -51,7 +51,7 @@ class FluentQueryTest extends TestCase
         );
     }
 
-    public function testAndSortDescending()
+    public function testAndSortDescending(): void
     {
         $fm = new FluentQueryStub();
         $fm->sort('field', false);
@@ -65,7 +65,7 @@ class FluentQueryTest extends TestCase
         );
     }
 
-    public function testWithPortals()
+    public function testWithPortals(): void
     {
         $fm = new FluentQueryStub();
         $this->assertEquals(false, $fm->getWithPortals());
@@ -77,7 +77,7 @@ class FluentQueryTest extends TestCase
         $this->assertEquals(false, $fm->getWithPortals());
     }
 
-    public function testWhereEmpty()
+    public function testWhereEmpty(): void
     {
         $fm = new FluentQueryStub();
         $fm->whereEmpty('field');
@@ -85,7 +85,7 @@ class FluentQueryTest extends TestCase
         $this->assertEquals(['query' => [ [ 'field' => '=' ] ]], $fm->getQuery());
     }
 
-    public function testWhereWithOneParameter()
+    public function testWhereWithOneParameter(): void
     {
         $fm = new FluentQueryStub();
         $fm->where('field', 'value');
@@ -93,7 +93,7 @@ class FluentQueryTest extends TestCase
         $this->assertEquals(['query' => [ [ 'field' => '=value' ] ]], $fm->getQuery());
     }
 
-    public function testWhereWithTwoParameter()
+    public function testWhereWithTwoParameter(): void
     {
         $fm = new FluentQueryStub();
         $fm->where('field', 'value', 'extra');
@@ -101,7 +101,7 @@ class FluentQueryTest extends TestCase
         $this->assertEquals(['query' => [ [ 'field' => 'valueextra' ] ]], $fm->getQuery());
     }
 
-    public function testWhereWithMultipleParameters()
+    public function testWhereWithMultipleParameters(): void
     {
         $fm = new FluentQueryStub();
         $fm->where('field', 'value', 'extra', 'extra');
@@ -109,13 +109,13 @@ class FluentQueryTest extends TestCase
         $this->assertEquals(['query' => [ [ 'field' => '*' ] ]], $fm->getQuery());
     }
 
-    public function testWhereCriteria()
+    public function testWhereCriteria(): void
     {
         $fm = new FluentQueryStub();
         $fm->whereCriteria(['criteria' => '123']);
         $this->assertEquals(['query' => ['criteria' => '123']], $fm->getQuery());
     }
-    public function testWhereNotEmpty()
+    public function testWhereNotEmpty(): void
     {
         $fm = new FluentQueryStub();
         $fm->whereNotEmpty('field');
@@ -123,7 +123,7 @@ class FluentQueryTest extends TestCase
         $this->assertEquals(['query' => [ [ 'field' => '=*' ] ]], $fm->getQuery());
     }
 
-    public function testHas()
+    public function testHas(): void
     {
         $fm = new FluentQueryStub();
         $fm->has('field');
@@ -131,7 +131,7 @@ class FluentQueryTest extends TestCase
         $this->assertEquals(['query' => [ [ 'field' => '=*' ] ]], $fm->getQuery());
     }
 
-    public function testQueryString()
+    public function testQueryString(): void
     {
         $fm = new FluentQueryStub();
         $fm->has('hasField')->sortDesc('sort')->limit(10)->script('test');
@@ -144,7 +144,7 @@ class FluentQueryTest extends TestCase
         ], $fm->queryString());
     }
 
-    public function testPreRequest()
+    public function testPreRequest(): void
     {
         $fm = new FluentQueryStub();
         $fm->prerequest('script', 'param');
@@ -154,7 +154,7 @@ class FluentQueryTest extends TestCase
         ], $fm->getQuery());
     }
 
-    public function testScriptWithType()
+    public function testScriptWithType(): void
     {
         $fm = new FluentQueryStub();
         $fm->script('script', 'param', 'type');
@@ -164,7 +164,7 @@ class FluentQueryTest extends TestCase
         ], $fm->getQuery());
     }
 
-    public function testPresort()
+    public function testPresort(): void
     {
         $fm = new FluentQueryStub();
         $fm->presort('script', 'param');
@@ -174,7 +174,7 @@ class FluentQueryTest extends TestCase
         ], $fm->getQuery());
     }
 
-    public function testWithoutDeleted()
+    public function testWithoutDeleted(): void
     {
         $fm = new FluentQueryStub();
         $fm->withoutDeleted();
@@ -182,7 +182,7 @@ class FluentQueryTest extends TestCase
         $this->assertFalse($fm->getWithDeleted());
     }
 
-    public function testWithDeleted()
+    public function testWithDeleted(): void
     {
         $fm = new FluentQueryStub();
         $fm->withDeleted();

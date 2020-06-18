@@ -36,6 +36,7 @@ class FluentFMRepository extends BaseConnection implements FluentFM
 {
     use FluentQuery;
 
+    /** @var bool */
     protected $auto_id = false;
 
     public function __construct(array $config, ?Client $client = null)
@@ -50,6 +51,7 @@ class FluentFMRepository extends BaseConnection implements FluentFM
         return $this->client;
     }
 
+    /** @return array<string,int|string> */
     public function getClientHeaders(): array
     {
         return [
@@ -133,6 +135,7 @@ class FluentFMRepository extends BaseConnection implements FluentFM
 
     /**
      * {@inheritdoc}
+     * @param array<int|string, mixed> $portals
      */
     public function create(string $layout, array $fields = [], array $portals = [])
     {
@@ -162,7 +165,7 @@ class FluentFMRepository extends BaseConnection implements FluentFM
     /**
      * Creates new filemaker record on table.
      *
-     * @param array $body
+     * @param array<int|string, array|mixed> $body
      *
      * @return int|mixed
      *
@@ -214,6 +217,8 @@ class FluentFMRepository extends BaseConnection implements FluentFM
 
     /**
      * {@inheritdoc}
+     * @param array<int|string, mixed> $deleteRelated
+     * @param array<int|string, mixed|array> $portals
      */
     public function update(
         string $layout,
@@ -315,20 +320,23 @@ class FluentFMRepository extends BaseConnection implements FluentFM
             ]);
 
         foreach ($records as $record) {
-            $ext = pathinfo(
-                parse_url($record[$field])['path'],
-                PATHINFO_EXTENSION
-            );
+            $url = parse_url($record[$field]);
+            if ($url && isset($url['path'])) {
+                $ext = pathinfo(
+                    $url['path'],
+                    PATHINFO_EXTENSION
+                );
 
-            $filename = sprintf('%s/%s.%s', $output_dir, $recordId, $ext ? $ext : 'pdf');
-            $response = $downloader->get($record[$field]);
+                $filename = sprintf('%s/%s.%s', $output_dir, $recordId, $ext ? $ext : 'pdf');
+                $response = $downloader->get($record[$field]);
 
-            // Response::check( $response, $this->query );
+                // Response::check( $response, $this->query );
 
-            file_put_contents(
-                $filename,
-                $response->getBody()->getContents()
-            );
+                file_put_contents(
+                    $filename,
+                    $response->getBody()->getContents()
+                );
+            }
         }
 
             $downloader = null;
@@ -337,7 +345,7 @@ class FluentFMRepository extends BaseConnection implements FluentFM
         return $this;
     }
 
-    public function downloadFromPath(string $path, string $filename, string $output_dir)
+    public function downloadFromPath(string $path, string $filename, string $output_dir): string
     {
         // $this->callback = function () use ( $path, $filename, $output_dir ) {
         if (! is_dir($output_dir) && ! mkdir($output_dir, 0775, true) && ! is_dir($output_dir)) {
@@ -532,6 +540,9 @@ class FluentFMRepository extends BaseConnection implements FluentFM
         return array_pop($result);
     }
 
+    /**
+     * @return array<int|string, array|mixed>
+     */
     private function getResultForCurrentQuery(): array
     {
         $query = $this->query;

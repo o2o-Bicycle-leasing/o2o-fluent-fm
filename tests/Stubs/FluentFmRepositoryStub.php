@@ -14,11 +14,13 @@ class FluentFmRepositoryStub extends FluentFMRepository
         return $this->with_deleted;
     }
 
-    public function __construct($config, $client)
+    public function __construct(array $config, ?Client $client)
     {
+        $this->config = $config;
         parent::__construct(['host' => 'host', 'file' => 'file'], $client);
     }
 
+    /** @return array<int|string,mixed|array> */
     public function getQuery(): array
     {
         return $this->query;

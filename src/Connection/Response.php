@@ -15,6 +15,8 @@ class Response
 {
     /**
      * Get response body contents.
+     *
+     * @return mixed
      */
     public static function body(ResponseInterface $response)
     {
@@ -25,6 +27,8 @@ class Response
 
     /**
      * Get response returned records.
+     *
+     * @return array<int|string,mixed|array>
      */
     public static function records(ResponseInterface $response, bool $with_portals = false): array
     {
@@ -65,6 +69,10 @@ class Response
         );
     }
 
+    /**
+     * @param mixed $record
+     * @return array<mixed,mixed|array>
+     */
     public static function generateResponse($record): array
     {
         $fieldData = (array) $record->fieldData;
@@ -78,6 +86,8 @@ class Response
 
     /**
      * Get response returned message.
+     *
+     * @return mixed|null
      */
     public static function message(ResponseInterface $response)
     {
@@ -91,7 +101,7 @@ class Response
     }
 
     /**
-     * @param array $query
+     * @param array<string|int,mixed|array> $query
      *
      * @throws FilemakerException
      */
@@ -127,7 +137,6 @@ class Response
                 );
             case 952:
                 throw TokenException::invalid();
-                break;
             default:
                 throw new FilemakerException(
                     ExceptionMessages::generic($message, $query),

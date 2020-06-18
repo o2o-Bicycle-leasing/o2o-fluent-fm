@@ -11,6 +11,7 @@ class FluentQueryStub implements FluentFM
 {
     use FluentQuery;
 
+    /** @return array<int|string,array|mixed> */
     public function getQuery(): array
     {
         return $this->query;
@@ -54,6 +55,7 @@ class FluentQueryStub implements FluentFM
      */
     public function findPaginated(string $layout, int $page = 1, int $perPage = 10)
     {
+        return $this;
     }
 
     /**
@@ -68,6 +70,7 @@ class FluentQueryStub implements FluentFM
      */
     public function globals(string $layout, array $fields = []): bool
     {
+        return true;
     }
 
     /**
@@ -117,6 +120,7 @@ class FluentQueryStub implements FluentFM
      */
     public function fields(string $layout): array
     {
+        return ['id'];
     }
 
     public function logout(): void

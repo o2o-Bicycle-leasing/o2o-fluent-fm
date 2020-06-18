@@ -13,9 +13,12 @@ class PaginatedCollection
     /** @var int */
     private $perPage;
 
-    /** @var array */
+    /** @var array<mixed, mixed> */
     private $data;
 
+    /**
+     * @param array<mixed, mixed> $data
+     */
     public function __construct(array $data, int $totalCount, int $perPage, int $currentPage)
     {
         $this->currentPage = $currentPage;
@@ -41,9 +44,12 @@ class PaginatedCollection
 
     public function getPageCount(): int
     {
-        return ceil($this->totalCount / $this->perPage);
+        return (int) ceil($this->totalCount / $this->perPage);
     }
 
+    /**
+     * @return array<mixed, mixed> $data
+     */
     public function getData(): array
     {
         return $this->data;

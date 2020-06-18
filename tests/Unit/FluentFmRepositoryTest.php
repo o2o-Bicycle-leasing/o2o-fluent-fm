@@ -15,7 +15,7 @@ use GuzzleHttp\Psr7\Response;
 
 class FluentFmRepositoryTest extends TestCase
 {
-    /** @var array */
+    /** @var array<int, array> */
     private $container = [];
 
     /** @var Client */
@@ -31,7 +31,7 @@ class FluentFmRepositoryTest extends TestCase
         $this->httpClient = new Client(['handler' => $handlerStack]);
     }
 
-    public function testInitialQueryIsCleared()
+    public function testInitialQueryIsCleared(): void
     {
         $repo = new FluentFmRepositoryStub([], $this->httpClient);
         $this->assertEquals([
@@ -48,7 +48,7 @@ class FluentFmRepositoryTest extends TestCase
         ], $repo->getQuery());
     }
 
-    public function testHeaders()
+    public function testHeaders(): void
     {
         $repo = new FluentFmRepositoryStub([], $this->httpClient);
         $this->assertEquals([
@@ -60,7 +60,7 @@ class FluentFmRepositoryTest extends TestCase
         ], $repo->getClientHeaders());
     }
 
-    public function testRecords()
+    public function testRecords(): void
     {
         $repo = new FluentFmRepositoryStub([], $this->httpClient);
         $repo->record('layout', 5)->get();
@@ -70,7 +70,7 @@ class FluentFmRepositoryTest extends TestCase
         $this->assertEquals('layouts/layout/records/5', $request->getUri()->getPath());
     }
 
-    public function testAuthHeaders()
+    public function testAuthHeaders(): void
     {
         $repo = new FluentFmRepositoryStub([], $this->httpClient);
         $repo->record('layout', 5)->get();
@@ -79,7 +79,7 @@ class FluentFmRepositoryTest extends TestCase
         $this->assertEquals('Bearer token', $request->getHeaderLine('Authorization'));
     }
 
-    public function testFind()
+    public function testFind(): void
     {
         $repo = new FluentFmRepositoryStub([], $this->httpClient);
         $repo->find('layout')->where('param', 'value')->get();
@@ -88,7 +88,7 @@ class FluentFmRepositoryTest extends TestCase
         $this->assertPost($request, 'layouts/layout/_find', '{"query":[{"param":"=value"}]}');
     }
 
-    public function testFindPaginated()
+    public function testFindPaginated(): void
     {
         $repo = new FluentFmRepositoryStub([], $this->httpClient);
         $repo->findPaginated('layout')->where('param', 'value')->get();
@@ -97,7 +97,7 @@ class FluentFmRepositoryTest extends TestCase
         $this->assertPost($request, 'layouts/layout/_find', '{"limit":10,"query":[{"param":"=value"}]}');
     }
 
-    public function testFindPaginatedNextPage()
+    public function testFindPaginatedNextPage(): void
     {
         $repo = new FluentFmRepositoryStub([], $this->httpClient);
         $repo->findPaginated('layout', 2)->where('param', 'value')->get();
@@ -106,7 +106,7 @@ class FluentFmRepositoryTest extends TestCase
         $this->assertPost($request, 'layouts/layout/_find', '{"limit":10,"offset":10,"query":[{"param":"=value"}]}');
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $repo = new FluentFmRepositoryStub([], $this->httpClient);
         $repo->create('layout', ['field' => 'value'], ['portal' => 'value']);
@@ -119,7 +119,7 @@ class FluentFmRepositoryTest extends TestCase
         );
     }
 
-    public function testBroadcast()
+    public function testBroadcast(): void
     {
         $repo = new FluentFmRepositoryStub([], $this->httpClient);
         $repo->broadcast(['data' => 'content']);
@@ -127,7 +127,7 @@ class FluentFmRepositoryTest extends TestCase
         $this->assertPost($request, 'layouts/API_request/records', '{"data":"content"}');
     }
 
-    public function testGlobals()
+    public function testGlobals(): void
     {
         $repo = new FluentFmRepositoryStub([], $this->httpClient);
         $repo->globals('layout', ['field' => 'value']);
@@ -140,7 +140,7 @@ class FluentFmRepositoryTest extends TestCase
         );
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
         $repo = new FluentFmRepositoryStub([], $this->httpClient);
         $repo->update('layout', ['field' => 'value'], 1, ['portals' => 'test'], ['delete'])->get();
@@ -153,7 +153,7 @@ class FluentFmRepositoryTest extends TestCase
         );
     }
 
-    public function testUpload()
+    public function testUpload(): void
     {
         $repo = new FluentFmRepositoryStub([], $this->httpClient);
         $repo->upload('layout', 'field', __DIR__ . '/../Stubs/file.txt', 1)->get();
@@ -171,7 +171,7 @@ class FluentFmRepositoryTest extends TestCase
     }
 
     /* TODO: should probably check the download */
-    public function testDownload()
+    public function testDownload(): void
     {
         $repo = new FluentFmRepositoryStub([], $this->httpClient);
         $repo->download('layout', 'field', './', 1);
@@ -180,7 +180,7 @@ class FluentFmRepositoryTest extends TestCase
         $this->assertEquals('layouts/layout/records/1', $request->getUri()->getPath());
     }
 
-    public function testDelete()
+    public function testDelete(): void
     {
         $repo = new FluentFmRepositoryStub([], $this->httpClient);
         $repo->delete('layout', 1)->get();
@@ -189,7 +189,7 @@ class FluentFmRepositoryTest extends TestCase
         $this->assertEquals('layouts/layout/records/1', $request->getUri()->getPath());
     }
 
-    public function testSoftDelete()
+    public function testSoftDelete(): void
     {
         $repo = new FluentFmRepositoryStub([], $this->httpClient);
         $repo->softDelete('layout', 1)->get();
@@ -201,7 +201,7 @@ class FluentFmRepositoryTest extends TestCase
             $request->getBody()->getContents()
         );
     }
-    public function testUndelete()
+    public function testUndelete(): void
     {
         $repo = new FluentFmRepositoryStub([], $this->httpClient);
         $repo->undelete('layout', 1)->get();
@@ -215,7 +215,7 @@ class FluentFmRepositoryTest extends TestCase
         $this->assertTrue($repo->getWithDeleted());
     }
 
-    public function testLogout()
+    public function testLogout(): void
     {
         $repo = new FluentFmRepositoryStub([], $this->httpClient);
         $repo->logout();
@@ -228,11 +228,20 @@ class FluentFmRepositoryTest extends TestCase
 
     private function popLastRequest(): Request
     {
-        return array_pop($this->container)['request'];
+        $req = array_pop($this->container);
+        if (isset($req['request'])) {
+            return $req['request'];
+        }
+
+        throw new \Exception('Last request not found');
     }
 
-    private function assertPost(Request $request, string $expectedUrl, string $expectedBody, $method = 'POST')
-    {
+    private function assertPost(
+        Request $request,
+        string $expectedUrl,
+        string $expectedBody,
+        string $method = 'POST'
+    ): void {
         $this->assertEquals($method, $request->getMethod());
         $this->assertEquals($expectedUrl, $request->getUri()->getPath());
         $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'));

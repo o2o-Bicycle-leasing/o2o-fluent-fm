@@ -6,7 +6,10 @@ use function sprintf;
 
 class Url
 {
-    public static function records(string $layout, ?int $id = null): string
+    /**
+     * @param null|string|int $id
+     */
+    public static function records(string $layout, $id = null): string
     {
         $record = $id ? '/' . $id : '';
 
@@ -23,7 +26,10 @@ class Url
         return 'globals';
     }
 
-    public static function container(string $layout, string $field, int $recordId): string
+    /**
+     * @param string|int $recordId
+     */
+    public static function container(string $layout, string $field, $recordId): string
     {
         return sprintf(
             'layouts/%s/records/%s/containers/%s/1',

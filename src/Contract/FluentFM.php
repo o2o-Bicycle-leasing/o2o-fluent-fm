@@ -13,22 +13,18 @@ interface FluentFM
     /**
      * Get record by record id.
      *
-     * @param $layout
-     * @param $id
-     *
-     * @return FluentFM
+     * @param     string   $layout
+     * @param null|mixed   $id
      */
-    public function record($layout, $id): self;
+    public function record($layout, $id): FluentFM;
 
     /**
      * Get records from filemaker table.
      *
-     * @param      $layout
-     * @param null   $id
-     *
-     * @return FluentFM
+     * @param     string   $layout
+     * @param null|mixed   $id
      */
-    public function records($layout, $id = null): self;
+    public function records($layout, $id = null): FluentFM;
 
     /**
      * Find records matching current query parameters.
@@ -43,7 +39,7 @@ interface FluentFM
     /**
      * Creates new filemaker record on table.
      *
-     * @param array $fields
+     * @param array<string, string> $fields
      *
      * @return int|mixed
      *
@@ -52,7 +48,7 @@ interface FluentFM
     public function create(string $layout, array $fields = []);
 
     /**
-     * @param array $fields
+     * @param array<string, string> $fields
      *
      * @throws FilemakerException
      */
@@ -63,7 +59,7 @@ interface FluentFM
      * updates will be applied to all records matching the current
      * query parameters.
      *
-     * @param array $fields
+     * @param array<string, string> $fields
      *
      * @return mixed
      */
@@ -114,7 +110,7 @@ interface FluentFM
     /**
      * Get fields for Filemaker table.
      *
-     * @return array
+     * @return array<int, string|int>
      *
      * @throws FilemakerException
      */
@@ -188,142 +184,122 @@ interface FluentFM
      *
      * @return FluentFM
      */
-    public function limit(int $limit): self;
+    public function limit(int $limit): FluentFM;
 
     /**
      * Begin result set at the given record id.
      *
      * @return FluentFM
      */
-    public function offset(int $offset): self;
+    public function offset(int $offset): FluentFM;
 
     /**
      * Sort results by field.
      *
      * @return FluentFM
      */
-    public function sort(string $field, bool $ascending = true): self;
+    public function sort(string $field, bool $ascending = true): FluentFM;
 
     /**
      * Add field to sort results.
      *
      * @return FluentFM
      */
-    public function andSort(string $field, bool $ascending = true): self;
+    public function andSort(string $field, bool $ascending = true): FluentFM;
 
     /**
      * Sort results by field and ValueList.
      *
      * @return FluentFM
      */
-    public function sortByValueList(string $field, string $valueList): self;
+    public function sortByValueList(string $field, string $valueList): FluentFM;
 
     /**
      * And sort results by field and ValueList.
      *
      * @return FluentFM
      */
-    public function andSortByValueList(string $field, string $valueList): self;
+    public function andSortByValueList(string $field, string $valueList): FluentFM;
 
     /**
      * Sort results ascending by field.
      *
      * @return FluentFM
      */
-    public function sortAsc(string $field): self;
+    public function sortAsc(string $field): FluentFM;
 
     /**
      * Sort results descending by field.
      *
      * @return FluentFM
      */
-    public function sortDesc(string $field): self;
+    public function sortDesc(string $field): FluentFM;
 
     /**
      * Include portal data in results.
      *
      * @return FluentFM
      */
-    public function withPortals(): self;
+    public function withPortals(): FluentFM;
 
     /**
      * Don't include portal data in results.
      *
      * @return FluentFM
      */
-    public function withoutPortals(): self;
+    public function withoutPortals(): FluentFM;
 
     /**
-     * @param       $field
-     * @param array $params
+     * @param       string $field
+     * @param       string ...$params
      *
      * @return FluentFM
      */
-    public function where($field, array ...$params): self;
+    public function where($field, ...$params): FluentFM;
 
     /**
-     * @param $criteria
-     *
-     * @return FluentFM
+     * @param array<string|int,mixed|array> $criteria
      */
-    public function whereCriteria($criteria): self;
+    public function whereCriteria($criteria): FluentFM;
 
     /**
-     * @param $field
-     *
-     * @return FluentFM
+     * @param string $field
      */
-    public function whereEmpty($field): self;
+    public function whereEmpty($field): FluentFM;
 
-    /**
-     * @return FluentFM
-     */
-    public function has(string $field): self;
+    public function has(string $field): FluentFM;
 
-    /**
-     * @return FluentFM
-     */
-    public function whereNotEmpty(string $field): self;
+    public function whereNotEmpty(string $field): FluentFM;
 
     /**
      * Include records that have their deleted_at field set.
-     *
-     * @return FluentFM
      */
-    public function withDeleted(): self;
+    public function withDeleted(): FluentFM;
 
     /**
      * Exclude records that have their deleted_at field set.
-     *
-     * @return FluentFM
      */
-    public function withoutDeleted(): self;
+    public function withoutDeleted(): FluentFM;
 
     /**
      * Run FileMaker script with param. If no type specified script will run
      * after requested action and sorting is complete.
      *
-     * @param null $param
-     *
-     * @return FluentFM
+     * @param null|mixed $param
      */
-    public function script(string $script, $param = null, ?string $type = null): self;
+    public function script(string $script, $param = null, ?string $type = null): FluentFM;
 
     /**
      * Run FileMaker script with param before requested action.
      *
-     * @param null $param
-     *
-     * @return FluentFM
+     * @param null|mixed $param
      */
-    public function prerequest(string $script, $param = null): self;
+    public function prerequest(string $script, $param = null): FluentFM;
 
     /**
      * Run FileMaker script with param after requested action but before sort.
      *
-     * @param null $param
-     *
-     * @return FluentFM
+     * @param null|mixed $param
      */
-    public function presort(string $script, $param = null): self;
+    public function presort(string $script, $param = null): FluentFM;
 }
