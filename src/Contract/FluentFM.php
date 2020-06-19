@@ -59,7 +59,7 @@ interface FluentFM
      * updates will be applied to all records matching the current
      * query parameters.
      *
-     * @param array<string, string> $fields
+     * @param array<string, mixed> $fields
      *
      * @return mixed
      */
