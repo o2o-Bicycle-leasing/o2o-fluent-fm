@@ -39,7 +39,7 @@ interface FluentFM
     /**
      * Creates new filemaker record on table.
      *
-     * @param array<string, string> $fields
+     * @param array<string, mixed> $fields
      *
      * @return int|mixed
      *
@@ -48,7 +48,7 @@ interface FluentFM
     public function create(string $layout, array $fields = []);
 
     /**
-     * @param array<string, string> $fields
+     * @param array<string, mixed> $fields
      *
      * @throws FilemakerException
      */
