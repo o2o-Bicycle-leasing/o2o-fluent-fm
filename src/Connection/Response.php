@@ -85,6 +85,45 @@ class Response
     }
 
     /**
+     * @param mixed[] $records
+     * @return array<mixed,mixed|array>
+     */
+    public static function recordsWithPortals(array $records): array
+    {
+        $resultSet = [];
+        foreach ($records as $record) {
+            $resultSet[] = self::generateResponseWithPortals($record);
+        }
+
+        return $resultSet;
+    }
+
+    /**
+     * @param mixed $record
+     * @return array<mixed,mixed|array>
+     */
+    public static function generateResponseWithPortals($record): array
+    {
+        $record = (object) $record;
+
+        $fieldData = (array) $record->fieldData;
+
+        if (! isset($fieldData['recordId'])) {
+            $fieldData['recordId'] = (int) $record->recordId;
+        }
+        if (! isset($fieldData['portals'])) {
+            $fieldData['portals'] = json_decode(
+                json_encode($record->portalData, JSON_THROW_ON_ERROR),
+                true,
+                512,
+                JSON_THROW_ON_ERROR
+            );
+        }
+
+        return $fieldData;
+    }
+
+    /**
      * Get response returned message.
      *
      * @return mixed|null
