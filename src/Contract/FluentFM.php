@@ -107,14 +107,7 @@ interface FluentFM
      */
     public function undelete(string $layout, ?int $recordId = null);
 
-    /**
-     * Get fields for Filemaker table.
-     *
-     * @return array<int, string|int>
-     *
-     * @throws FilemakerException
-     */
-    public function fields(string $layout): array;
+    public function fields(string $layout): FluentFM;
 
     public function logout(): void;
 

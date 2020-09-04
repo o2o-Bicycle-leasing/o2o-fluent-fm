@@ -139,6 +139,18 @@ class Response
         return $message;
     }
 
+    public static function fields(ResponseInterface $response): array
+    {
+        $fields = static::body($response)->response->fieldMetaData;
+
+        $result = [];
+        foreach ($fields as $field) {
+            $result[] = $field->name;
+        }
+
+        return $result;
+    }
+
     /**
      * @param array<string|int,mixed|array> $query
      *

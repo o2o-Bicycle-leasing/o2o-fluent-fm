@@ -17,7 +17,7 @@ class ResponseTest extends TestCase
         $this->response = new GuzzleResponse(
             200,
             [],
-            (string) file_get_contents(__DIR__ . '/../Stubs/response.json')
+            (string)file_get_contents(__DIR__ . '/../Stubs/response.json')
         );
     }
 
@@ -35,5 +35,18 @@ class ResponseTest extends TestCase
         $this->assertEquals(5, $response->getItemsPerPage());
         $this->assertEquals(19, $response->getPageCount());
         $this->assertCount(5, $response->getData());
+    }
+
+    public function testFields(): void
+    {
+        $response = Response::fields(
+            new GuzzleResponse(
+                200,
+                [],
+                (string) file_get_contents(__DIR__ . '/../Stubs/responseFields.json')
+            )
+        );
+
+        $this->assertCount(32, $response);
     }
 }

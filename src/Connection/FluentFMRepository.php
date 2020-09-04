@@ -428,18 +428,20 @@ class FluentFMRepository extends BaseConnection implements FluentFM
     /**
      * {@inheritdoc}
      */
-    public function fields(string $layout): array
+    public function fields(string $layout): FluentFM
     {
-        if (isset($this->field_cache[$layout])) {
-            return $this->field_cache[$layout];
-        }
+        $this->callback = function () use ($layout) {
+            $response = $this->client->get('layouts/' . $layout, [
+                'Content-Type' => 'application/json',
+                'headers'      => $this->authHeader(),
+                'json'         => array_filter($this->query),
+            ]);
+            Response::check($response, array_filter($this->query));
 
-        $id          = $this->create($layout);
-        $temp_record = $this->record($layout, $id)->first();
-        $fields      = array_keys($temp_record);
-        $this->delete($layout, $id)->exec();
+            return Response::fields($response);
+        };
 
-        return $this->field_cache[$layout] = $fields;
+        return $this;
     }
 
     /**
