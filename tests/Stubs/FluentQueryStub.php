@@ -118,9 +118,8 @@ class FluentQueryStub implements FluentFM
     /**
      * @inheritDoc
      */
-    public function fields(string $layout): array
+    public function fields(string $layout): FluentFM
     {
-        return ['id'];
     }
 
     public function logout(): void
