@@ -47,6 +47,8 @@ class ResponseTest extends TestCase
             )
         );
 
-        $this->assertCount(32, $response);
+        $this->assertCount(32, $response['fields']);
+        $this->assertCount(1, $response['portals']);
+        $this->assertCount(7, $response['portals']['Order || Persoon']);
     }
 }

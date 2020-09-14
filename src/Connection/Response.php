@@ -141,11 +141,21 @@ class Response
 
     public static function fields(ResponseInterface $response): array
     {
-        $fields = static::body($response)->response->fieldMetaData;
+        $response = static::body($response)->response;
 
         $result = [];
+        $fields = $response->fieldMetaData;
         foreach ($fields as $field) {
-            $result[] = $field->name;
+            $result['fields'][] = $field->name;
+        }
+
+        $portals = (array) $response->portalMetaData;
+        foreach ($portals as $key => $portal) {
+            $result['portals'][$key] = [];
+
+            foreach ($portal as $field) {
+                $result['portals'][$key][] = $field->name;
+            }
         }
 
         return $result;
