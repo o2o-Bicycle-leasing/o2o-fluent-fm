@@ -120,6 +120,7 @@ class FluentQueryStub implements FluentFM
      */
     public function fields(string $layout): FluentFM
     {
+        return $this;
     }
 
     public function logout(): void

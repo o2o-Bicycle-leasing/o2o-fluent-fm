@@ -139,11 +139,15 @@ class Response
         return $message;
     }
 
+    /** @return array{'fields': string[], 'portals': array<string, string[]>} */
     public static function fields(ResponseInterface $response): array
     {
         $response = static::body($response)->response;
 
-        $result = [];
+        $result = [
+            'fields' => [],
+            'portals' => []
+        ];
         $fields = $response->fieldMetaData;
         foreach ($fields as $field) {
             $result['fields'][] = $field->name;
