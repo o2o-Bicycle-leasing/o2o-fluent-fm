@@ -55,7 +55,7 @@ class FluentFMRepository extends BaseConnection implements FluentFM
     public function getClientHeaders(): array
     {
         return [
-            'Authorization' => 'Bearer ' . $this->getToken(),
+            'Authorization' => 'Bearer ' . $this->getTokenWithRetries(3),
             'Content-Type'  => 'application/json',
             'Accept'        => 'application/json',
             'cache-control' => 'no-cache',

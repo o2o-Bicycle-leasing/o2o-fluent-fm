@@ -51,8 +51,6 @@ abstract class BaseConnection
             'connect_timeout' => 10,
             'timeout'         => 60,
         ]);
-
-        $this->getToken();
     }
 
     /**
@@ -76,7 +74,7 @@ abstract class BaseConnection
     protected function authHeader(): array
     {
         if (! $this->token) {
-            $this->getToken();
+            $this->getTokenWithRetries(3);
         }
 
         return [
