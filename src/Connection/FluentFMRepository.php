@@ -358,9 +358,13 @@ class FluentFMRepository extends BaseConnection implements FluentFM
                 'cookies' => true,
             ]);
 
+        if (pathinfo($filename, PATHINFO_EXTENSION) === '') {
             $ext = pathinfo($path, PATHINFO_EXTENSION);
-
             $filename = sprintf('%s/%s.%s', $output_dir, $filename, $ext ? $ext : 'pdf');
+        } else {
+            $filename = sprintf('%s/%s', $output_dir, $filename);
+        }
+        
         if (strpos($filename, '?')) {
             $filenameParts = explode('?', $filename);
             $filename      = $filenameParts[0];
