@@ -5,7 +5,7 @@ namespace o2o\FluentFM\Utils;
 use ArrayAccess;
 use Illuminate\Support\Collection;
 
-class PaginatedCollection implements ArrayAccess
+class PaginatedCollection implements ArrayAccess, \Iterator
 {
     /** @var int */
     private $totalCount;
@@ -15,6 +15,9 @@ class PaginatedCollection implements ArrayAccess
 
     /** @var int */
     private $perPage;
+
+    /** @var int */
+    private $pointer = 0;
 
     /**
      * The items contained in the collection.
@@ -122,6 +125,31 @@ class PaginatedCollection implements ArrayAccess
     public function offsetUnset($key)
     {
         unset($this->items[$key]);
+    }
+
+    public function current()
+    {
+        return $this->items[$this->pointer];
+    }
+
+    public function next()
+    {
+        $this->pointer++;
+    }
+
+    public function key()
+    {
+        return $this->pointer;
+    }
+
+    public function valid()
+    {
+        return $this->pointer < count($this->items);
+    }
+
+    public function rewind()
+    {
+        $this->pointer = 0;
     }
 
     /**
