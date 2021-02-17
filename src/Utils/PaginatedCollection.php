@@ -2,7 +2,9 @@
 
 namespace o2o\FluentFM\Utils;
 
-class PaginatedCollection
+use Illuminate\Support\Collection;
+
+class PaginatedCollection extends Collection
 {
     /** @var int */
     private $totalCount;
@@ -13,18 +15,20 @@ class PaginatedCollection
     /** @var int */
     private $perPage;
 
-    /** @var array<mixed, mixed> */
-    private $data;
-
     /**
-     * @param array<mixed, mixed> $data
+     * @param array<mixed, mixed> $items
      */
-    public function __construct(array $data, int $totalCount, int $perPage, int $currentPage)
-    {
+    public function __construct(
+        array $items = [],
+        int $totalCount = 0,
+        int $perPage,
+        int $currentPage
+    ) {
         $this->currentPage = $currentPage;
         $this->totalCount = $totalCount;
         $this->perPage = $perPage;
-        $this->data = $data;
+
+        parent::__construct($items);
     }
 
     public function getTotalItemCount(): int
@@ -52,6 +56,6 @@ class PaginatedCollection
      */
     public function getData(): array
     {
-        return $this->data;
+        return $this->items;
     }
 }
