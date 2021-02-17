@@ -2,9 +2,10 @@
 
 namespace o2o\FluentFM\Utils;
 
+use ArrayAccess;
 use Illuminate\Support\Collection;
 
-class PaginatedCollection extends Collection
+class PaginatedCollection implements ArrayAccess
 {
     /** @var int */
     private $totalCount;
@@ -16,19 +17,25 @@ class PaginatedCollection extends Collection
     private $perPage;
 
     /**
+     * The items contained in the collection.
+     *
+     * @var array
+     */
+    protected $items = [];
+
+    /**
      * @param array<mixed, mixed> $items
      */
     public function __construct(
         array $items = [],
         int $totalCount = 0,
-        int $perPage,
-        int $currentPage
+        int $perPage = 100,
+        int $currentPage = 1
     ) {
         $this->currentPage = $currentPage;
         $this->totalCount = $totalCount;
         $this->perPage = $perPage;
-
-        parent::__construct($items);
+        $this->items = $items;
     }
 
     public function getTotalItemCount(): int
@@ -52,10 +59,82 @@ class PaginatedCollection extends Collection
     }
 
     /**
+     * @deprecated use all()
      * @return array<mixed, mixed> $data
      */
     public function getData(): array
     {
         return $this->items;
+    }
+
+    /**
+     * @return array<mixed, mixed> $data
+     */
+    public function all(): array
+    {
+        return $this->items;
+    }
+
+    /**
+     * Determine if an item exists at an offset.
+     *
+     * @param  mixed  $key
+     * @return bool
+     */
+    public function offsetExists($key)
+    {
+        return isset($this->items[$key]);
+    }
+
+    /**
+     * Get an item at a given offset.
+     *
+     * @param  mixed  $key
+     * @return mixed
+     */
+    public function offsetGet($key)
+    {
+        return $this->items[$key];
+    }
+
+    /**
+     * Set the item at a given offset.
+     *
+     * @param  mixed  $key
+     * @param  mixed  $value
+     * @return void
+     */
+    public function offsetSet($key, $value)
+    {
+        if (is_null($key)) {
+            $this->items[] = $value;
+        } else {
+            $this->items[$key] = $value;
+        }
+    }
+
+    /**
+     * Unset the item at a given offset.
+     *
+     * @param  string  $key
+     * @return void
+     */
+    public function offsetUnset($key)
+    {
+        unset($this->items[$key]);
+    }
+
+    /**
+     * Run a map over each of the items.
+     *
+     * @param  callable  $callback
+     * @return static
+     */
+    public function map(callable $callback)
+    {
+        $keys = array_keys($this->items);
+        $items = array_map($callback, $this->items, $keys);
+
+        return new static(array_combine($keys, $items), $this->totalCount, $this->perPage, $this->currentPage);
     }
 }
