@@ -19,6 +19,8 @@ class PaginatedCollection implements ArrayAccess, \Iterator
     /** @var int */
     private $pointer = 0;
 
+    private $itemValues = [];
+
     /**
      * The items contained in the collection.
      *
@@ -129,7 +131,7 @@ class PaginatedCollection implements ArrayAccess, \Iterator
 
     public function current()
     {
-        return $this->items[$this->pointer];
+        return array_values($this->items)[$this->pointer];
     }
 
     public function next()
