@@ -167,4 +167,17 @@ class PaginatedCollection implements ArrayAccess, \Iterator
 
         return new static(array_combine($keys, $items), $this->totalCount, $this->perPage, $this->currentPage);
     }
+
+    /**
+     * @return array<string, int>
+     */
+    public function getMetaData()
+    {
+        return [
+            'page' => $this->getCurrentPage(),
+            'total' => $this->getTotalItemCount(),
+            'per_page' => $this->getItemsPerPage(),
+            'pages' => $this->getPageCount(),
+        ];
+    }
 }
