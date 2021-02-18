@@ -117,7 +117,7 @@ class FluentFMRepository extends BaseConnection implements FluentFM
     {
         $this->callback = function () use ($layout, $page, $perPage) {
             $this->limit($perPage);
-            $this->offset(($page - 1) * $perPage);
+            $this->offset(($page - 1) * $perPage + 1);
 
             $response = $this->client->post(Url::find($layout), [
                 'Content-Type' => 'application/json',
@@ -364,7 +364,7 @@ class FluentFMRepository extends BaseConnection implements FluentFM
         } else {
             $filename = sprintf('%s/%s', $output_dir, $filename);
         }
-        
+
         if (strpos($filename, '?')) {
             $filenameParts = explode('?', $filename);
             $filename      = $filenameParts[0];
