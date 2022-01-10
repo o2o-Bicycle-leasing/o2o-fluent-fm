@@ -188,6 +188,8 @@ class Response
             case 0:
             case 401:
                 return;
+            case 1:
+                throw DataApiException::userCancelledAction();
             case 3:
                 throw DataApiException::connectionRefused();
             case 102:
