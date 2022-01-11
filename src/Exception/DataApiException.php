@@ -19,9 +19,14 @@ class DataApiException extends FilemakerException
     public static function userCancelledAction(): DataApiException
     {
         Cache::forget('fm_token');
-        $message = 'User cancelled Action, forget current token & retry';
+        $error = new self('User cancelled Action, forget current token & retry', 401);
 
-        \error_log($message);
-        return new self($message, 401);
+        if (function_exists('report')) {
+            report($error);
+        } else {
+            \error_log($error->getMessage());
+        }
+
+        return $error;
     }
 }
