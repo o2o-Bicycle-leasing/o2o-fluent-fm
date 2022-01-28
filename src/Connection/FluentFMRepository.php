@@ -477,6 +477,10 @@ class FluentFMRepository extends BaseConnection implements FluentFM
     {
         $results = null;
 
+        if (! isset($this->query['query'][0]) || ! is_array($this->query['query'][0])) {
+            $this->has('id');
+        }
+
         if ($this->with_deleted === false) {
             $this->whereEmpty('deleted_at');
         }
