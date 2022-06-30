@@ -30,6 +30,13 @@ trait FluentQuery
 
         return $this;
     }
+    
+    public function limitPortal(string $portal, int $limit): FluentFM
+    {
+        $this->query['limit.' . $portal] = $limit;
+
+        return $this;
+    }
 
     /**
      * Begin result set at the given record id.
