@@ -178,6 +178,13 @@ interface FluentFM
      * @return FluentFM
      */
     public function limit(int $limit): FluentFM;
+    
+    /**
+     * Limit the number of results for a specific portal.
+     *
+     * @return FluentFM
+     */
+    public function limitPortal(string $portal, int $limit): FluentFM;
 
     /**
      * Begin result set at the given record id.
