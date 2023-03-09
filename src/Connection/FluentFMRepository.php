@@ -489,8 +489,7 @@ class FluentFMRepository extends BaseConnection implements FluentFM
             $results = ( $this->callback )();
         } catch (Throwable $e) {
             if ($e->getCode() === 401) {
-                Cache::forget('fm_token');
-                $this->getTokenWithRetries(8);
+                $this->replaceToken($this->token);
                 $results = ( $this->callback )();
             } elseif ($e instanceof RequestException && $response = $e->getResponse()) {
                 Response::check($response, $this->query);

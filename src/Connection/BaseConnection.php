@@ -7,6 +7,7 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use o2o\FluentFM\Exception\DataApiException;
 use o2o\FluentFM\Exception\FilemakerException;
 use o2o\FluentFM\Exception\TokenException;
@@ -74,12 +75,67 @@ abstract class BaseConnection
     protected function authHeader(): array
     {
         if (! $this->token) {
-            $this->getTokenWithRetries(3);
+            $this->getToken();
         }
 
         return [
             'Authorization' => 'Bearer ' . $this->token,
         ];
+    }
+
+    public function getCachedTokens(): array
+    {
+        return Cache::get('fm_token') ?: [];
+    }
+
+    public function replaceToken(string $token): bool
+    {
+        $tokens = Cache::get('fm_token') ?: [];
+        if (is_string($tokens)) {
+            $tokens = [$tokens];
+        }
+
+        if (($key = array_search($token, $tokens)) !== false) {
+            unset($tokens[$key]);
+        }
+
+        Cache::put('fm_token', $tokens);
+
+        if (count($tokens) < max($this->config('token_limit') - 2, 1)) {
+            $this->token = $this->createToken();
+        } else {
+            $this->token = $this->getToken();
+        }
+
+        return true;
+    }
+
+    public function createToken(): string
+    {
+        $tokens = Cache::get('fm_token') ?: [];
+        if (is_string($tokens)) {
+            $tokens = [$tokens];
+        }
+
+        $token = $this->client->post('sessions', [
+            'headers' => [
+                'Content-Type'  => 'application/json',
+                'Authorization' => 'Basic ' . base64_encode($this->config('user') . ':' . $this->config('pass')),
+            ],
+        ])->getHeader('X-FM-Data-Access-Token');
+
+        if (count($token) === 0) {
+            throw TokenException::noTokenReturned();
+        }
+        $tokens[] = $token[0];
+
+        if (count($tokens) > $this->config('token_limit')) {
+            array_shift($tokens);
+        }
+
+        Cache::put('fm_token', $tokens);
+
+        return $token[0];
     }
 
     /**
@@ -89,7 +145,14 @@ abstract class BaseConnection
      */
     public function getToken(bool $force = false): string
     {
-        if (! $force && Cache::has('fm_token') && ! is_null(Cache::get('fm_token'))) {
+        if (!$force && Cache::has('fm_token') && !is_null(Cache::get('fm_token'))) {
+            if (is_array(Cache::get('fm_token'))) {
+                $tokens = Cache::get('fm_token');
+                $index = rand(0, count($tokens) - 1);
+                return $this->token = $tokens[$index];
+            }
+
+
             return $this->token = Cache::get('fm_token');
         }
 
@@ -106,7 +169,7 @@ abstract class BaseConnection
             }
 
             $token = $token[0];
-            Cache::put('fm_token', $token, 60 * 14);
+            Cache::put('fm_token', $token, 60 * $this->config('token_ttl'));
 
             return $this->token = $token;
         } catch (ClientException $e) {
