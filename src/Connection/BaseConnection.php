@@ -99,7 +99,7 @@ abstract class BaseConnection
             unset($tokens[$key]);
         }
 
-        Cache::put('fm_token', $tokens);
+        Cache::put('fm_token', array_values($tokens));
 
         if (count($tokens) < max($this->config('token_limit') - 2, 1)) {
             $this->token = $this->createToken();
@@ -149,6 +149,11 @@ abstract class BaseConnection
             if (is_array(Cache::get('fm_token'))) {
                 $tokens = Cache::get('fm_token');
                 $index = rand(0, count($tokens) - 1);
+                if (!isset($tokens[$index])) {
+                    $tokens[$index] = $this->createToken();
+                    Cache::put('fm_token', $tokens);
+                }
+
                 return $this->token = $tokens[$index];
             }
 
