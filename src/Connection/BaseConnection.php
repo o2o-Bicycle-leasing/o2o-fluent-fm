@@ -74,7 +74,7 @@ abstract class BaseConnection
      */
     protected function authHeader(): array
     {
-        if (! $this->token) {
+        if (!$this->token) {
             $this->getToken();
         }
 
@@ -85,15 +85,16 @@ abstract class BaseConnection
 
     public function getCachedTokens(): array
     {
-        return Cache::get('fm_token') ?: [];
-    }
-
-    public function replaceToken(string $token): bool
-    {
         $tokens = Cache::get('fm_token') ?: [];
         if (is_string($tokens)) {
             $tokens = [$tokens];
         }
+        return $tokens;
+    }
+
+    public function replaceToken(string $token): bool
+    {
+        $tokens = $this->getCachedTokens();
 
         if (($key = array_search($token, $tokens)) !== false) {
             unset($tokens[$key]);
@@ -112,10 +113,7 @@ abstract class BaseConnection
 
     public function createToken(): string
     {
-        $tokens = Cache::get('fm_token') ?: [];
-        if (is_string($tokens)) {
-            $tokens = [$tokens];
-        }
+        $tokens = $this->getCachedTokens();
 
         $token = $this->client->post('sessions', [
             'headers' => [
@@ -145,43 +143,12 @@ abstract class BaseConnection
      */
     public function getToken(bool $force = false): string
     {
-        if (!$force && Cache::has('fm_token') && !is_null(Cache::get('fm_token'))) {
-            if (is_array(Cache::get('fm_token'))) {
-                $tokens = Cache::get('fm_token');
-                $index = rand(0, count($tokens) - 1);
-                if (!isset($tokens[$index])) {
-                    $tokens[$index] = $this->createToken();
-                    Cache::put('fm_token', $tokens);
-                }
-
-                return $this->token = $tokens[$index];
-            }
-
-
-            return $this->token = Cache::get('fm_token');
+        $tokens = $this->getCachedTokens();
+        $index = rand(0, max(0, count($tokens) - 1));
+        if (!isset($tokens[$index])) {
+            $tokens[$index] = $this->createToken();
         }
-
-        try {
-            $token = $this->client->post('sessions', [
-                'headers' => [
-                    'Content-Type'  => 'application/json',
-                    'Authorization' => 'Basic ' . base64_encode($this->config('user') . ':' . $this->config('pass')),
-                ],
-            ])->getHeader('X-FM-Data-Access-Token');
-
-            if (count($token) === 0) {
-                throw TokenException::noTokenReturned();
-            }
-
-            $token = $token[0];
-            Cache::put('fm_token', $token, 60 * $this->config('token_ttl'));
-
-            return $this->token = $token;
-        } catch (ClientException $e) {
-            throw TokenException::unauthorized();
-        } catch (RequestException $e) {
-            throw TokenException::noTokenReturned();
-        }
+        return $this->token = $tokens[$index];
     }
 
     public function getTokenWithRetries(int $maxRetries = 5, int $initialWait = 100, int $exponent = 2): string
