@@ -147,7 +147,6 @@ abstract class BaseConnection
         $index = rand(0, max(0, count($tokens) - 1));
         if (!isset($tokens[$index])) {
             $tokens[$index] = $this->createToken();
-            Cache::put('fm_token', $tokens);
         }
         return $this->token = $tokens[$index];
     }
