@@ -74,6 +74,14 @@ interface FluentFM
     public function upload(string $layout, string $field, string $filename, ?int $recordId = null);
 
     /**
+     * Upload a file stream to a container in recordId, if no record id specified
+     * file will be added to all records matching current query.
+     *
+     * @return mixed
+     */
+    public function uploadStream(string $layout, string $field, $fileStream, ?int $recordId = null);
+
+    /**
      * Download contents of container field to directory.
      * If no record id is specified the file will be downloaded for all records matching current query.
      * Files will be named using the id field of the record and the original file extension.

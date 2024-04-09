@@ -300,6 +300,44 @@ class FluentFMRepository extends BaseConnection implements FluentFM
     /**
      * {@inheritdoc}
      */
+    public function uploadStream(string $layout, string $field, $fileStream, ?int $recordId = null): FluentFM
+    {
+        $this->callback = function () use ($layout, $field, $fileStream, $recordId) {
+            $recordIds = $recordId ? [ $recordId ] : array_keys($this->find($layout)->get());
+
+            foreach ($recordIds as $id) {
+                $response = $this->client->post(Url::container($layout, $field, $id), [
+                    'Content-Type' => 'multipart/form-data',
+                    'headers'      => $this->authHeader(),
+                    'multipart'    => [
+                        [
+                            'name'     => 'upload',
+                            'contents' => rewind($fileStream),
+                            'filename' => basename(stream_get_meta_data($fileStream)['uri']),
+                        ],
+                    ],
+                ]);
+
+                Response::check($response, [
+                    'multipart' => [
+                        [
+                            'name'     => 'upload',
+                            'contents' => '...',
+                            'filename' => basename(stream_get_meta_data($fileStream)['uri']),
+                        ],
+                    ],
+                ]);
+            }
+
+            return true;
+        };
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function download(string $layout, string $field, string $output_dir = './', ?int $recordId = null): FluentFM
     {
         // $this->callback = function () use ( $layout, $field, $output_dir, $recordId ) {
