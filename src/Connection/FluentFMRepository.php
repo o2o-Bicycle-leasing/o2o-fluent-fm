@@ -4,7 +4,7 @@ namespace o2o\FluentFM\Connection;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 use o2o\FluentFM\Contract\FluentFM;
 use o2o\FluentFM\Exception\FilemakerException;
 use o2o\FluentFM\Exception\NoResultException;
@@ -416,6 +416,26 @@ class FluentFMRepository extends BaseConnection implements FluentFM
 
             $downloader = null;
         // };
+
+        return $filename;
+    }
+
+    public function downloadFromPathToDisk(string $path, string $filename, string $disk, string $diskPath): string
+    {
+        $downloader = new Client([
+            'verify'  => false,
+            'headers' => $this->authHeader(),
+            'cookies' => true,
+        ]);
+
+        if (strpos($filename, '?')) {
+            $filenameParts = explode('?', $filename);
+            $filename      = $filenameParts[0];
+        }
+        $response = $downloader->get($path);
+
+        Storage::disk($disk)->put($diskPath . '/' . $filename, $response->getBody()->getContents());
+        $downloader = null;
 
         return $filename;
     }
