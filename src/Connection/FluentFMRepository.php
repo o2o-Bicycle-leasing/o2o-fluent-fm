@@ -306,14 +306,15 @@ class FluentFMRepository extends BaseConnection implements FluentFM
             $recordIds = $recordId ? [ $recordId ] : array_keys($this->find($layout)->get());
 
             foreach ($recordIds as $id) {
+                $filename = basename(stream_get_meta_data($fileStream)['uri']);
                 $response = $this->client->post(Url::container($layout, $field, $id), [
                     'Content-Type' => 'multipart/form-data',
                     'headers'      => $this->authHeader(),
                     'multipart'    => [
                         [
                             'name'     => 'upload',
-                            'contents' => rewind($fileStream),
-                            'filename' => basename(stream_get_meta_data($fileStream)['uri']),
+                            'contents' => $fileStream,
+                            'filename' => $filename,
                         ],
                     ],
                 ]);
@@ -323,7 +324,7 @@ class FluentFMRepository extends BaseConnection implements FluentFM
                         [
                             'name'     => 'upload',
                             'contents' => '...',
-                            'filename' => basename(stream_get_meta_data($fileStream)['uri']),
+                            'filename' => $filename,
                         ],
                     ],
                 ]);
