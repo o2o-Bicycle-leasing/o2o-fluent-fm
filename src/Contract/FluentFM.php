@@ -79,7 +79,7 @@ interface FluentFM
      *
      * @return mixed
      */
-    public function uploadStream(string $layout, string $field, $fileStream, ?int $recordId = null);
+    public function uploadStream(string $layout, string $field, $fileStream, string $filename, ?int $recordId = null);
 
     /**
      * Download contents of container field to directory.
