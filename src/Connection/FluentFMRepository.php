@@ -340,7 +340,6 @@ class FluentFMRepository extends BaseConnection implements FluentFM
      */
     public function download(string $layout, string $field, string $output_dir = './', ?int $recordId = null): FluentFM
     {
-        // $this->callback = function () use ( $layout, $field, $output_dir, $recordId ) {
         if ($recordId) {
             $records = $this->record($layout, $recordId)->get();
         } else {
@@ -351,11 +350,11 @@ class FluentFMRepository extends BaseConnection implements FluentFM
             throw new RuntimeException(sprintf('Directory "%s" was not created', $output_dir));
         }
 
-            $downloader = new Client([
-                'verify'  => false,
-                'headers' => $this->authHeader(),
-                'cookies' => true,
-            ]);
+        $downloader = new Client([
+            'verify'  => false,
+            'headers' => $this->authHeader(),
+            'cookies' => true,
+        ]);
 
         foreach ($records as $record) {
             $url = parse_url($record[$field]);
@@ -368,8 +367,6 @@ class FluentFMRepository extends BaseConnection implements FluentFM
                 $filename = sprintf('%s/%s.%s', $output_dir, $recordId, $ext ? $ext : 'pdf');
                 $response = $downloader->get($record[$field]);
 
-                // Response::check( $response, $this->query );
-
                 file_put_contents(
                     $filename,
                     $response->getBody()->getContents()
@@ -377,25 +374,26 @@ class FluentFMRepository extends BaseConnection implements FluentFM
             }
         }
 
-            $downloader = null;
-        // };
+        $downloader = null;
 
         return $this;
     }
 
     public function downloadFromPath(string $path, string $filename, string $output_dir): string
     {
-        // $this->callback = function () use ( $path, $filename, $output_dir ) {
-        if (! is_dir($output_dir) && ! mkdir($output_dir, 0775, true) && ! is_dir($output_dir)) {
+        // Ensure the output directory exists
+        if (!is_dir($output_dir) && !mkdir($output_dir, 0775, true) && !is_dir($output_dir)) {
             throw new RuntimeException(sprintf('Directory "%s" was not created', $output_dir));
         }
 
-            $downloader = new Client([
-                'verify'  => false,
-                'headers' => $this->authHeader(),
-                'cookies' => true,
-            ]);
+        // Initialize the downloader client
+        $downloader = new Client([
+            'verify'  => false,
+            'headers' => $this->authHeader(),
+            'cookies' => true,
+        ]);
 
+        // Determine the full filename with extension
         if (pathinfo($filename, PATHINFO_EXTENSION) === '') {
             $ext = pathinfo($path, PATHINFO_EXTENSION);
             $filename = sprintf('%s/%s.%s', $output_dir, $filename, $ext ? $ext : 'pdf');
@@ -403,22 +401,28 @@ class FluentFMRepository extends BaseConnection implements FluentFM
             $filename = sprintf('%s/%s', $output_dir, $filename);
         }
 
+        // Remove query parameters from the filename, if present
         if (strpos($filename, '?')) {
             $filenameParts = explode('?', $filename);
-            $filename      = $filenameParts[0];
+            $filename = $filenameParts[0];
         }
-            $response = $downloader->get($path);
 
-            file_put_contents(
-                $filename,
-                $response->getBody()->getContents()
-            );
+        // Perform the file download
+        $response = $downloader->get($path);
 
-            $downloader = null;
-        // };
+        // Write the downloaded content to the file
+        file_put_contents($filename, $response->getBody()->getContents());
+
+        // Validate the file exists and is not empty
+        if (!file_exists($filename) || filesize($filename) === 0) {
+            throw new RuntimeException(sprintf('Failed to download file to "%s"', $filename));
+        }
+
+        $downloader = null;
 
         return $filename;
     }
+
 
     public function downloadFromPathToDisk(string $path, string $filename, string $disk, string $diskPath): string
     {
