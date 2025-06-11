@@ -5,6 +5,10 @@ namespace o2o\FluentFM\Utils;
 use ArrayAccess;
 use Illuminate\Support\Collection;
 
+/**
+ * @template-implements ArrayAccess<mixed, mixed>
+ * @template-implements \Iterator<mixed, mixed>
+ */
 class PaginatedCollection implements ArrayAccess, \Iterator
 {
     /** @var int */
@@ -19,19 +23,17 @@ class PaginatedCollection implements ArrayAccess, \Iterator
     /** @var int */
     private $pointer = 0;
 
-    private $itemValues = [];
-
     /**
      * The items contained in the collection.
      *
-     * @var array
+     * @var array<mixed, mixed>
      */
     protected $items = [];
 
     /**
      * @param array<mixed, mixed> $items
      */
-    public function __construct(
+    final public function __construct(
         array $items = [],
         int $totalCount = 0,
         int $perPage = 100,
@@ -86,7 +88,7 @@ class PaginatedCollection implements ArrayAccess, \Iterator
      * @param  mixed  $key
      * @return bool
      */
-    public function offsetExists($key)
+    public function offsetExists($key): bool
     {
         return isset($this->items[$key]);
     }
@@ -97,7 +99,7 @@ class PaginatedCollection implements ArrayAccess, \Iterator
      * @param  mixed  $key
      * @return mixed
      */
-    public function offsetGet($key)
+    public function offsetGet($key): mixed
     {
         return $this->items[$key];
     }
@@ -109,7 +111,7 @@ class PaginatedCollection implements ArrayAccess, \Iterator
      * @param  mixed  $value
      * @return void
      */
-    public function offsetSet($key, $value)
+    public function offsetSet($key, $value): void
     {
         if (is_null($key)) {
             $this->items[] = $value;
@@ -124,32 +126,32 @@ class PaginatedCollection implements ArrayAccess, \Iterator
      * @param  string  $key
      * @return void
      */
-    public function offsetUnset($key)
+    public function offsetUnset($key): void
     {
         unset($this->items[$key]);
     }
 
-    public function current()
+    public function current(): mixed
     {
         return array_values($this->items)[$this->pointer];
     }
 
-    public function next()
+    public function next(): void
     {
         $this->pointer++;
     }
 
-    public function key()
+    public function key(): int
     {
         return $this->pointer;
     }
 
-    public function valid()
+    public function valid(): bool
     {
         return $this->pointer < count($this->items);
     }
 
-    public function rewind()
+    public function rewind(): void
     {
         $this->pointer = 0;
     }

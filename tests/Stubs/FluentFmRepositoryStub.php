@@ -16,13 +16,20 @@ class FluentFmRepositoryStub extends FluentFMRepository
 
     public function __construct(array $config, ?Client $client)
     {
-        $this->config = $config;
-        parent::__construct(['host' => 'host', 'file' => 'file'], $client);
+        parent::__construct(
+            array_merge(['host' => 'host', 'file' => 'file', 'user' => 'user', 'pass' => 'pass'], $config),
+            $client,
+        );
     }
 
     /** @return array<int|string,mixed|array> */
     public function getQuery(): array
     {
         return $this->query;
+    }
+
+    public function getToken(bool $force = false): string
+    {
+        return $this->token = 'token';
     }
 }

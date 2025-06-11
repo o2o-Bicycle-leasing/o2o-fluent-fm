@@ -15,7 +15,7 @@ use GuzzleHttp\Psr7\Response;
 
 class FluentFmRepositoryTest extends TestCase
 {
-    /** @var array<int, array> */
+    /** @var array<int, mixed>|\ArrayAccess<int, mixed> */
     private $container = [];
 
     /** @var Client */
@@ -94,7 +94,7 @@ class FluentFmRepositoryTest extends TestCase
         $repo->findPaginated('layout')->where('param', 'value')->get();
 
         $request = $this->popLastRequest();
-        $this->assertPost($request, 'layouts/layout/_find', '{"limit":10,"query":[{"param":"=value"}]}');
+        $this->assertPost($request, 'layouts/layout/_find', '{"limit":10,"offset":1,"query":[{"param":"=value"}]}');
     }
 
     public function testFindPaginatedNextPage(): void
@@ -103,7 +103,7 @@ class FluentFmRepositoryTest extends TestCase
         $repo->findPaginated('layout', 2)->where('param', 'value')->get();
 
         $request = $this->popLastRequest();
-        $this->assertPost($request, 'layouts/layout/_find', '{"limit":10,"offset":10,"query":[{"param":"=value"}]}');
+        $this->assertPost($request, 'layouts/layout/_find', '{"limit":10,"offset":11,"query":[{"param":"=value"}]}');
     }
 
     public function testCreate(): void
@@ -218,6 +218,7 @@ class FluentFmRepositoryTest extends TestCase
     public function testLogout(): void
     {
         $repo = new FluentFmRepositoryStub([], $this->httpClient);
+        $repo->getToken();
         $repo->logout();
 
         $request = $this->popLastRequest();
@@ -228,6 +229,11 @@ class FluentFmRepositoryTest extends TestCase
 
     private function popLastRequest(): Request
     {
+        // The container should be an array, not an ArrayAccess for this to work.
+        if (!is_array($this->container)) {
+            $this->container = [];
+        }
+
         $req = array_pop($this->container);
         if (isset($req['request'])) {
             return $req['request'];

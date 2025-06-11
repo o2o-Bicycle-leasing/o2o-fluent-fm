@@ -8,10 +8,6 @@ use PHPUnit\Framework\TestCase;
 
 class RetryGetTokenTest extends TestCase
 {
-
-    /** @var int */
-    private $tries;
-
     public function testSucceeds(): void
     {
         $connection = new class extends BaseConnectionStub {
@@ -28,7 +24,7 @@ class RetryGetTokenTest extends TestCase
     public function testKeepsFailing(): void
     {
         $connection = new class extends BaseConnectionStub {
-            public int $retries = -2; //initial in constructor + first call doesn't count
+            public int $retries = -1; // First call doesn't count
 
             public function getToken(bool $force = false): string
             {
