@@ -153,6 +153,19 @@ class FluentFmRepositoryTest extends TestCase
         );
     }
 
+    public function testRawUpdate(): void
+    {
+        $repo = new FluentFmRepositoryStub([], $this->httpClient);
+        $repo->rawUpdate('layout', 1, ['customData' => 'test'])->get();
+        $request = $this->popLastRequest();
+        $this->assertPost(
+            $request,
+            'layouts/layout/records/1',
+            '{"customData":"test"}',
+            'PATCH'
+        );
+    }
+
     public function testUpload(): void
     {
         $repo = new FluentFmRepositoryStub([], $this->httpClient);

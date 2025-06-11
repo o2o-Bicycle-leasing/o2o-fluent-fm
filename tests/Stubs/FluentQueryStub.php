@@ -182,4 +182,8 @@ class FluentQueryStub implements FluentFM
     public function uploadStream(string $layout, string $field, $fileStream, string $filename, ?int $recordId = null)
     {
     }
+
+    public function rawUpdate(string $layout, int $recordId, array $json)
+    {
+    }
 }

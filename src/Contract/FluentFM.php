@@ -66,6 +66,15 @@ interface FluentFM
     public function update(string $layout, array $fields = [], ?int $recordId = null);
 
     /**
+     * Update record with given recordId. Allows providing the raw JSON body for calling custom scripts.
+     *
+     * @param array<string, mixed> $json
+     *
+     * @return mixed
+     */
+    public function rawUpdate(string $layout, int $recordId, array $json);
+
+    /**
      * Upload a file to a container in recordId, if no record id specified
      * file will be added to all records matching current query.
      *
