@@ -262,6 +262,24 @@ class FluentFMRepository extends BaseConnection implements FluentFM
     /**
      * {@inheritdoc}
      */
+    public function rawUpdate(string $layout, int $recordId, array $json): FluentFM
+    {
+        $this->callback = function () use ($layout, $recordId, $json) {
+            $response = $this->client->patch(Url::records($layout, $recordId), [
+                'Content-Type' => 'application/json',
+                'headers'      => $this->authHeader(),
+                'json'         => $json,
+            ]);
+
+            Response::check($response, $json);
+        };
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function upload(string $layout, string $field, string $filename, ?int $recordId = null): FluentFM
     {
         $this->callback = function () use ($layout, $field, $filename, $recordId) {
