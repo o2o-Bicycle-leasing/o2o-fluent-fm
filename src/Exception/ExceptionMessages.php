@@ -148,11 +148,10 @@ Note:: This payload does seem to be <fg=white;options=bold>missing the `id` fiel
 
         $array  = preg_replace(
             [ '/\s*array\s\($/', '/\)(,)?$/', '/\s=>\s$/', '/NULL/' ],
-            [ null, ']$1', ' => [', 'null' ],
+            [ '', ']$1', ' => [', 'null' ],
             $array
         );
 
-        // @phpstan-ignore-next-line
         return PHP_EOL . '  <fg=white>$payload = ' . implode(PHP_EOL, array_filter([ '[' ] + $array)) . ';</>';
     }
 }

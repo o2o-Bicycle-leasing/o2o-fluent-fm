@@ -4,8 +4,6 @@ namespace o2o\FluentFM\Connection;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use o2o\FluentFM\Exception\DataApiException;
@@ -13,7 +11,6 @@ use o2o\FluentFM\Exception\FilemakerException;
 use o2o\FluentFM\Exception\TokenException;
 
 use function base64_encode;
-use function is_null;
 use function sprintf;
 
 abstract class BaseConnection
@@ -24,17 +21,14 @@ abstract class BaseConnection
     /** @var callable */
     protected $callback;
 
-    /** @var array<string, string|array> */
+    /** @var array<string, mixed> */
     protected $config;
 
     /** @var string */
     protected $token;
 
-    /** @var array<string, array> */
-    protected $field_cache = [];
-
     /**
-     * @param array<string, string|array> $config
+     * @param array<string, mixed> $config
      *
      * @throws FilemakerException
      */
@@ -83,6 +77,9 @@ abstract class BaseConnection
         ];
     }
 
+    /**
+     * @return array<string>
+     */
     public function getCachedTokens(): array
     {
         $tokens = Cache::get('fm_token') ?: [];

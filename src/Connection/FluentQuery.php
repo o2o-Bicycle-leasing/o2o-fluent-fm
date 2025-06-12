@@ -179,7 +179,7 @@ trait FluentQuery
     }
 
     /**
-     * @var array $criteria
+     * @inheritDoc
      */
     public function whereCriteria($criteria): FluentFM
     {
@@ -199,7 +199,7 @@ trait FluentQuery
     }
 
     /**
-     * @return array<string,string|array>
+     * @return array<string,mixed>
      */
     public function queryString(): array
     {

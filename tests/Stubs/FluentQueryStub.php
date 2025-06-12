@@ -175,4 +175,11 @@ class FluentQueryStub implements FluentFM
     public function last()
     {
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function uploadStream(string $layout, string $field, $fileStream, string $filename, ?int $recordId = null)
+    {
+    }
 }

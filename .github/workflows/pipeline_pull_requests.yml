@@ -1,0 +1,22 @@
+name: Pull requests pipeline
+
+permissions:
+  contents: read
+
+on:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  linters:
+    uses: ./.github/workflows/lint.yml
+    name: Linters
+    secrets: inherit
+
+  tests:
+    uses: ./.github/workflows/tests.yml
+    name: Tests
+    secrets: inherit
