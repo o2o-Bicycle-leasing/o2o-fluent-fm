@@ -266,4 +266,17 @@ class FluentFmRepositoryTest extends TestCase
         $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'));
         $this->assertEquals($expectedBody, $request->getBody()->getContents());
     }
+
+    public function testCallScript(): void
+    {
+        $repo = new FluentFmRepositoryStub([], $this->httpClient);
+        $repo->callScript('layout', 'scriptName', ['param1' => 'value1'])->get();
+        $request = $this->popLastRequest();
+        $this->assertPost(
+            $request,
+            'layouts/layout/script/scriptName',
+            '',
+            'GET'
+        );
+    }
 }

@@ -649,4 +649,24 @@ class FluentFMRepository extends BaseConnection implements FluentFM
 
         return $param;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function callScript(string $layout, string $scriptName, array $params = []): FluentFM
+    {
+        $this->callback = function () use ($layout, $scriptName, $params) {
+            $scriptParams = json_encode($params, JSON_THROW_ON_ERROR);
+
+            $response = $this->client->get(
+                'layouts/' . $layout . '/script/' . urlencode($scriptName) .
+                '?script.param=' . urlencode($scriptParams),
+                [
+                    'headers' => $this->getClientHeaders()
+                ]
+            );
+            return $response->getBody()->getContents();
+        };
+        return $this;
+    }
 }
