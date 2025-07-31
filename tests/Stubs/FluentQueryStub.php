@@ -186,4 +186,8 @@ class FluentQueryStub implements FluentFM
     public function rawUpdate(string $layout, int $recordId, array $json)
     {
     }
+
+    public function callScript(string $layout, string $scriptName, array $params = []) 
+    {
+    }
 }

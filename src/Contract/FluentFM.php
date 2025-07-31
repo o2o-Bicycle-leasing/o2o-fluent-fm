@@ -321,4 +321,15 @@ interface FluentFM
      * @param null|mixed $param
      */
     public function presort(string $script, $param = null): FluentFM;
+
+    /**
+     * Call FileMaker script with params.
+     *
+     * @param string $layout
+     * @param string $scriptName
+     * @param array<string, mixed> $params
+     *
+     * @return mixed
+     */
+    public function callScript(string $layout, string $scriptName, array $params);
 }
