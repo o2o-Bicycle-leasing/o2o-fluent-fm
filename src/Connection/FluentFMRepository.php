@@ -15,7 +15,6 @@ use Throwable;
 use function array_filter;
 use function array_key_exists;
 use function array_keys;
-use function array_slice;
 use function basename;
 use function count;
 use function date;
@@ -659,8 +658,8 @@ class FluentFMRepository extends BaseConnection implements FluentFM
             $scriptParams = json_encode($params, JSON_THROW_ON_ERROR);
 
             $response = $this->client->get(
-                'layouts/' . $layout . '/script/' . urlencode($scriptName) .
-                '?script.param=' . urlencode($scriptParams),
+                'layouts/' . $layout . '/script/' . rawurlencode($scriptName) .
+                '?script.param=' . rawurlencode($scriptParams),
                 [
                     'headers' => $this->getClientHeaders()
                 ]
