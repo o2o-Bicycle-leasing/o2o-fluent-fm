@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use o2o\FluentFM\Contract\FluentFM;
 use o2o\FluentFM\Exception\FilemakerException;
 use o2o\FluentFM\Exception\NoResultException;
+use o2o\FluentFM\Exception\TokenException;
 use Ramsey\Uuid\Uuid;
 use RuntimeException;
 use Throwable;
@@ -664,6 +665,19 @@ class FluentFMRepository extends BaseConnection implements FluentFM
                     'headers' => $this->getClientHeaders()
                 ]
             );
+
+            try {
+                Response::check($response, $params);
+            } catch (TokenException $e) { // TokenException is thrown when the token is invalid
+                $this->replaceToken($this->token);
+                $response = $this->client->get(
+                    'layouts/' . $layout . '/script/' . rawurlencode($scriptName) .
+                    '?script.param=' . rawurlencode($scriptParams),
+                    [
+                        'headers' => $this->getClientHeaders()
+                    ]
+                );
+            }
             return $response->getBody()->getContents();
         };
         return $this;
