@@ -668,6 +668,7 @@ class FluentFMRepository extends BaseConnection implements FluentFM
 
             try {
                 Response::check($response, $params);
+                $response->getBody()->rewind();
             } catch (TokenException $e) { // TokenException is thrown when the token is invalid
                 $this->replaceToken($this->token);
                 $response = $this->client->get(
